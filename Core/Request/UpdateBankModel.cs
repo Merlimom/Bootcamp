@@ -1,7 +1,8 @@
-﻿namespace Core.Models;
+﻿namespace Core.Request;
 
-public class CreateBankModel
+public class UpdateBankModel
 {
+    public int Id { get; set; }
     public string? Name { get; set; }
     public string? Phone { get; set; }
     public string? Mail { get; set; }

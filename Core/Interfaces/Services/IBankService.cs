@@ -1,4 +1,5 @@
 ﻿using Core.Models;
+using Core.Request;
 using System.Threading.Tasks;
 
 namespace Core.Interfaces.Services;

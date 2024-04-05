@@ -1,9 +1,8 @@
 ﻿using Core.Constants;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Core.Entities;
+namespace Core.Request;
 
-public class Customer
+public class UpdateCustomerModel
 {
     public int Id { get; set; }
 
@@ -23,7 +22,4 @@ public class Customer
 
     public int BankId { get; set; }
     public DateTime? Birth { get; set; }
-
-    public virtual Bank Bank { get; set; } = null!;
-    public ICollection<Account> Accounts { get; set; } = new List<Account>();
 }
