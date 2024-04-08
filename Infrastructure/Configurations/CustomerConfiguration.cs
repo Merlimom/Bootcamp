@@ -32,6 +32,11 @@ public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
             .HasMaxLength(100);
 
         entity
+          .Property(e => e.CustomerStatus)
+          .HasMaxLength(100);
+        
+
+        entity
             .Property(e => e.Phone)
             .HasMaxLength(100);
 

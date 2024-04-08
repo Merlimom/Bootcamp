@@ -3,6 +3,7 @@ using Core.Interfaces.Services;
 using Core.Models;
 using Core.Request;
 using Core.Requests;
+using Infrastructure.Repositories;
 
 namespace Infrastructure.Services;
 
@@ -27,19 +28,20 @@ public class CustomerService : ICustomerService
         return await _customerRepository.Add(model);
     }
 
-    public Task<bool> Delete(int id)
+    public async Task<bool> Delete(int id)
     {
-        throw new NotImplementedException();
+        return await _customerRepository.Delete(id);
+
     }
 
-    public Task<List<CustomerDTO>> GetAll()
+    public async Task<List<CustomerDTO>> GetAll()
     {
-        throw new NotImplementedException();
+        return await _customerRepository.GetAll();
     }
 
-    public Task<CustomerDTO> GetById(int id)
+    public async Task<CustomerDTO> GetById(int id)
     {
-        throw new NotImplementedException();
+        return await _customerRepository.GetById(id);
     }
 
     public async Task<List<CustomerDTO>> GetFiltered(FilterCustomersModel filter)
@@ -47,8 +49,8 @@ public class CustomerService : ICustomerService
         return await _customerRepository.GetFiltered(filter);
     }
 
-    public Task<CustomerDTO> Update(UpdateCustomerModel model)
+    public async Task<CustomerDTO> Update(UpdateCustomerModel model)
     {
-        throw new NotImplementedException();
+        return await _customerRepository.Update(model);
     }
 }
