@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+using Core.Exceptions;
 using Core.Interfaces.Repositories;
 using Core.Models;
 using Core.Request;
@@ -34,7 +35,9 @@ public class BankRepository : IBankRepository
     {
         var bank = await _context.Banks.FindAsync(id);
 
-        if (bank is null) throw new Exception("Bank not found");
+        //if (bank is null) throw new Exception("Bank not found");
+        if (bank is null) throw new NotFoundException($"Bank with id: {id} doest not exist");
+
 
         _context.Banks.Remove(bank);
 
@@ -54,18 +57,29 @@ public class BankRepository : IBankRepository
 
     public async Task<BankDTO> GetById(int id)
     {
+        //throw new Exception("No se pudo conectar a la base de datos");
+
         var bank = await _context.Banks.FindAsync(id);
 
-        if (bank is null) throw new Exception("Bank not found");
+        if (bank is null) throw new NotFoundException($"Bank with id: {id} doest not exist");
 
         var bankDTO = bank.Adapt<BankDTO>();
 
         return bankDTO;
     }
 
+
     public async Task<bool> NameIsAlreadyTaken(string name)
     {
-        return await _context.Banks.AnyAsync(bank => bank.Name == name);
+        var isNameTaken = await _context.Banks.AnyAsync(bank => bank.Name == name);
+        //if (isNameTaken)
+        //{
+        //    throw new BusinessLogicException($"Bank name {name} is already taken");
+        //}
+        return isNameTaken;
+        //bool nameExists = await _context.Banks.AnyAsync(bank => bank.Name == name);
+        //return nameExists;
+        //throw new BusinessLogicException($"Bank name {name} is already taken");
     }
 
     public async Task<BankDTO> Update(UpdateBankModel model)

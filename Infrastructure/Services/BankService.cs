@@ -1,7 +1,9 @@
-﻿using Core.Interfaces.Repositories;
+﻿using Core.Exceptions;
+using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Core.Models;
 using Core.Request;
+using System.Xml.Linq;
 
 namespace Infrastructure.Services;
 
@@ -16,15 +18,15 @@ public class BankService : IBankService
 
     public async Task<BankDTO> Add(CreateBankModel model)
     {
-        bool nameIsInUse = await _bankRepository.NameIsAlreadyTaken(model.Name);
-
-        if (nameIsInUse)
+        bool isNameTaken = await _bankRepository.NameIsAlreadyTaken(model.Name);
+        if (isNameTaken)
         {
-            throw new Exception("Name is already in use");
+            throw new BusinessLogicException($"Bank name {model.Name} is already taken");
         }
 
         return await _bankRepository.Add(model);
     }
+
 
     public async Task<bool> Delete(int id)
     {
