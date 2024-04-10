@@ -14,8 +14,12 @@ public class CreateCustomerModelValidation : AbstractValidator<CreateCustomerMod
             .NotEmpty().WithMessage("Name cannot be empty");
 
         RuleFor(x => x.BankId)
-            .NotNull().WithMessage("Name cannot be null")
-            .NotEmpty().WithMessage("Name cannot be empty");
+            .NotNull().WithMessage("Bank Id cannot be null")
+            .NotEmpty().WithMessage("Bank Id cannot be empty");
+
+        RuleFor(x => x.CustomerStatus)
+            .Must(x => Enum.IsDefined(typeof(CreditCardStatus), x))
+            .WithMessage("Invalid CreditCard Status");
 
         RuleFor(x => x.Mail)
           .EmailAddress();

@@ -6,7 +6,7 @@ using Mapster;
 
 namespace Infrastructure.Mappings;
 
-public class CustomerMappingConfiguration
+public class CustomerMappingConfiguration : IRegister
 {
     public void Register(TypeAdapterConfig config)
     {

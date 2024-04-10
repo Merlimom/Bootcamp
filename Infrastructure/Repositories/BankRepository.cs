@@ -35,9 +35,7 @@ public class BankRepository : IBankRepository
     {
         var bank = await _context.Banks.FindAsync(id);
 
-        //if (bank is null) throw new Exception("Bank not found");
         if (bank is null) throw new NotFoundException($"Bank with id: {id} doest not exist");
-
 
         _context.Banks.Remove(bank);
 

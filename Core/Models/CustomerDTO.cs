@@ -24,5 +24,5 @@ public class CustomerDTO
 
     public DateTime? Birth { get; set; }
 
-    public virtual BankDTO Bank { get; set; } = null!;
+    public BankDTO Bank { get; set; } = null!;
 }

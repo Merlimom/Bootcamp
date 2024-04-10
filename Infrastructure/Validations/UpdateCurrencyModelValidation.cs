@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace Infrastructure.Validations;
 
-public class UpdateCurrencyModelValidations : AbstractValidator<UpdateCurrencyModel>
+public class UpdateCurrencyModelValidation : AbstractValidator<UpdateCurrencyModel>
 {
-    public UpdateCurrencyModelValidations()
+    public UpdateCurrencyModelValidation()
     {
         RuleFor(x => x.Name)
           .NotNull().WithMessage("Name cannot be null")
