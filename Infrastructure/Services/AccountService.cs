@@ -1,7 +1,9 @@
-﻿using Core.Interfaces.Repositories;
+﻿using Core.Exceptions;
+using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Core.Models;
 using Core.Request;
+using Infrastructure.Repositories;
 
 namespace Infrastructure.Services;
 
@@ -16,6 +18,17 @@ public class AccountService : IAccountService
 
     public async Task<AccountDTO> Add(CreateAccountModel model)
     {
+        bool customerDoesntExist = await _accountRepository.VerifyCustomerExists(model.CustomerId);
+        if (customerDoesntExist)
+        {
+            throw new BusinessLogicException($"Customer {model.CustomerId} does not exist");
+        }
+
+        bool currencyDoesntExist = await _accountRepository.VerifyCurrencyExists(model.CurrencyId);
+        if (currencyDoesntExist)
+        {
+            throw new BusinessLogicException($"Currency {model.CurrencyId} does not exist");
+        }
         return await _accountRepository.Add(model);
     }
 

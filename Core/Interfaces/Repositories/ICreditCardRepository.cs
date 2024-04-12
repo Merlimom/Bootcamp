@@ -10,6 +10,6 @@ public interface ICreditCardRepository
     Task<CreditCardDTO> GetById(int id);
     Task<CreditCardDTO> Update(UpdateCreditCardModel model);
     Task<bool> Delete(int id);
-    //Task<bool> VerifyCustomerExists(int id);
-    //Task<bool> VerifyCurrencyExists(int id);
+    Task<bool> VerifyCustomerExists(int id);
+    Task<bool> VerifyCurrencyExists(int id);
 }

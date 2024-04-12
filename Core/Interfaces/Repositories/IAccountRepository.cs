@@ -9,5 +9,7 @@ namespace Core.Interfaces.Repositories;
     Task<AccountDTO> Add(CreateAccountModel model);
     Task<AccountDTO> Update(UpdateAccountModel model);
     Task<bool> Delete(int id);
-    }
+    Task<bool> VerifyCustomerExists(int id);
+    Task<bool> VerifyCurrencyExists(int id);
+}
 

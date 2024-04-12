@@ -19,13 +19,10 @@ public class CreditCardRepository : ICreditCardRepository
     }
     public async Task<CreditCardDTO> Add(CreateCreditCardModel model)
     {
-        var customer = await _context.Customers
-               .Include(c => c.Bank)
-               .FirstOrDefaultAsync(c => c.Id == model.CustomerId);
-        if (customer is null) throw new NotFoundException($"Customer with id: {model.CustomerId} not found");
 
-        var currency = await _context.Currencies.FindAsync(model.CurrencyId);
-        if (currency is null) throw new NotFoundException($"Currency with id: {model.CurrencyId} not found");
+        var customers = await _context.Customers.ToListAsync();
+        var banks = await _context.Banks.ToListAsync();
+        var currencies = await _context.Currencies.ToListAsync();
 
         var creditCardToCreate = model.Adapt<CreditCard>();
 
@@ -37,32 +34,25 @@ public class CreditCardRepository : ICreditCardRepository
 
         return creditCardDTO;
 
+
         //var customer = await _context.Customers
         //       .Include(c => c.Bank)
         //       .FirstOrDefaultAsync(c => c.Id == model.CustomerId);
+        //if (customer is null) throw new NotFoundException($"Customer with id: {model.CustomerId} not found");
 
-        //var customers = await _context.Customers.ToListAsync();
-        //var banks = await _context.Banks.ToListAsync();
-        //var currencies = await _context.Currencies.ToListAsync();
-
-        //if (customers == null)
-        //{
-        //    throw new BusinessLogicException($"The customer with id '{model.CustomerId}' does not exist.");
-        //}
         //var currency = await _context.Currencies.FindAsync(model.CurrencyId);
-        //if (currency == null)
-        //{
-        //    throw new BusinessLogicException($"The Currency with id '{model.CurrencyId}' does not exist.");
-        //}
+        //if (currency is null) throw new NotFoundException($"Currency with id: {model.CurrencyId} not found");
 
         //var creditCardToCreate = model.Adapt<CreditCard>();
 
-        //_context.Add(creditCardToCreate);
+        //_context.CreditCards.Add(creditCardToCreate);
+
         //await _context.SaveChangesAsync();
 
-        //var creditcardDTO = creditCardToCreate.Adapt<CreditCardDTO>();
+        //var creditCardDTO = creditCardToCreate.Adapt<CreditCardDTO>();
 
-        //return creditcardDTO;
+        //return creditCardDTO;
+
     }
 
     public async Task<bool> Delete(int id)
@@ -150,19 +140,19 @@ public class CreditCardRepository : ICreditCardRepository
         return creditcardDTO;
     }
 
-    //public async Task<bool> VerifyCustomerExists(int id)
-    //{
-    //    var customerDoesntExist = await _context.Customers.AnyAsync(customer => customer.Id == id);
-      
-    //    return !customerDoesntExist;
+    public async Task<bool> VerifyCustomerExists(int id)
+    {
+        var customerDoesntExist = await _context.Customers.AnyAsync(customer => customer.Id == id);
 
-    //}
+        return !customerDoesntExist;
 
-    //public async Task<bool> VerifyCurrencyExists(int id)
-    //{
-    //    var currencyDoesntExist = await _context.Currencies.AnyAsync(currency => currency.Id == id);
+    }
 
-    //    return !currencyDoesntExist;
+    public async Task<bool> VerifyCurrencyExists(int id)
+    {
+        var currencyDoesntExist = await _context.Currencies.AnyAsync(currency => currency.Id == id);
 
-    //}
+        return !currencyDoesntExist;
+
+    }
 }
