@@ -23,7 +23,6 @@ public class CreateCreditCardModelValidation : AbstractValidator<CreateCreditCar
         RuleFor(x => x.CardNumber)
             .NotNull().WithMessage("Card Number cannot be null")
             .NotEmpty().WithMessage("Card Number cannot be empty")
-            //.Matches(@"^\d{16}$").WithMessage("Card number must have 16 numeric digits")
             .Must(IsValidCreditCardNumber).WithMessage("Card number must have 16 numeric digits");
 
         RuleFor(x => x.Cvv)

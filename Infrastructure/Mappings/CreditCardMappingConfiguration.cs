@@ -33,7 +33,7 @@ public class CreditCardMappingConfiguration : IRegister
             .Map(dest => dest.ExpirationDate, src => src.ExpirationDate)
             .Map(dest => dest.CardNumber, src => src.CardNumber)
             .Map(dest => dest.Cvv, src => src.Cvv)
-             .Map(dest => dest.CreditCardStatus, src => src.CreditCardStatus)
+            .Map(dest => dest.CreditCardStatus, src => src.CreditCardStatus)
             .Map(dest => dest.CreditLimit, src => src.CreditLimit)
             .Map(dest => dest.AvailableCredit, src => src.AvailableCredit)
             .Map(dest => dest.CurrentDebt, src => src.CurrentDebt)
