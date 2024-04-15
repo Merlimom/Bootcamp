@@ -51,4 +51,5 @@ public class CustomerController : BaseApiController
         var customers = await _customerService.GetAll();
         return Ok(customers);
     }
+
 }

@@ -34,25 +34,6 @@ public class CreditCardRepository : ICreditCardRepository
 
         return creditCardDTO;
 
-
-        //var customer = await _context.Customers
-        //       .Include(c => c.Bank)
-        //       .FirstOrDefaultAsync(c => c.Id == model.CustomerId);
-        //if (customer is null) throw new NotFoundException($"Customer with id: {model.CustomerId} not found");
-
-        //var currency = await _context.Currencies.FindAsync(model.CurrencyId);
-        //if (currency is null) throw new NotFoundException($"Currency with id: {model.CurrencyId} not found");
-
-        //var creditCardToCreate = model.Adapt<CreditCard>();
-
-        //_context.CreditCards.Add(creditCardToCreate);
-
-        //await _context.SaveChangesAsync();
-
-        //var creditCardDTO = creditCardToCreate.Adapt<CreditCardDTO>();
-
-        //return creditCardDTO;
-
     }
 
     public async Task<bool> Delete(int id)
