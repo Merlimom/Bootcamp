@@ -49,7 +49,7 @@ public static class DependencyInjection
         services.AddScoped < ICreditCardRepository, CreditCardRepository>();
         services.AddScoped<IAccountRepository, AccountRepository>();
         services.AddScoped<IPromotionRepository, PromotionRepository>();
-        services.AddScoped<IBusinessRepository, BusinessRepository>();
+        services.AddScoped<IEnterpriseRepository, EnterpriseRepository>();
 
 
         return services;
@@ -64,7 +64,7 @@ public static class DependencyInjection
         services.AddScoped<IJwtProvider, JwtProvider>();
         services.AddScoped<IAccountService, AccountService>();
         services.AddScoped<IPromotionService, PromotionService>();
-        services.AddScoped<IBusinessService, BusinessService>();
+        services.AddScoped<IEnterpriseService, EnterpriseService>();
 
 
 

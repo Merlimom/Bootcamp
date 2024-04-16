@@ -12,12 +12,19 @@ public class UpdatePromotionModelValidation : AbstractValidator<UpdatePromotionM
             .Must(x => x > 0).WithMessage("Invalid Account Id");
 
         RuleFor(x => x.Name)
-            .NotNull().WithMessage("Name cannot be null")
-            .NotEmpty().WithMessage("Name cannot be empty")
-            .MinimumLength(5).WithMessage("Name must have at least 5 characters");
+                  .NotNull().WithMessage("Name cannot be null")
+                  .NotEmpty().WithMessage("Name cannot be empty");
 
-        RuleFor(x => x.BusinessId)
-            .NotNull().WithMessage("BusinessId cannot be null")
-            .NotEmpty().WithMessage("BusinessId cannot be empty");
+        RuleFor(x => x.Start)
+           .NotNull().WithMessage("Start cannot be null")
+           .NotEmpty().WithMessage("Start cannot be empty");
+
+        RuleFor(x => x.End)
+           .NotNull().WithMessage("End cannot be null")
+           .NotEmpty().WithMessage("End cannot be empty");
+
+        RuleFor(x => x.Discount)
+           .NotNull().WithMessage("Discount cannot be null")
+           .NotEmpty().WithMessage("Discount cannot be empty");
     }
 }

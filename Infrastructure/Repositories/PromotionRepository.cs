@@ -6,6 +6,7 @@ using Core.Request;
 using Infrastructure.Contexts;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Principal;
 
 namespace Infrastructure.Repositories;
 
@@ -20,28 +21,40 @@ public class PromotionRepository : IPromotionRepository
 
     public async Task<PromotionDTO> Add(CreatePromotionModel model)
     {
-        var query = _context.Promotions
-                          .Include(a => a.Business)
-                          .AsQueryable();
+        var enterprises = await _context.Enterprises.ToListAsync();
 
-        var promotionToCreate = model.Adapt<Promotion>();
+        var promotion = model.Adapt<Promotion>();
+    
 
-        _context.Promotions.Add(promotionToCreate);
+        foreach (int enterpriseId in model.RelatedEnterpriseIds)
+        {
+            var promotionEnterprise = new PromotionEnterprise
+            {
+                Promotion = promotion,
+                EnterpriseId = enterpriseId
+            };
+            _context.PromotionEnterprises.Add(promotionEnterprise);
+        }
+
+        _context.Promotions.Add(promotion);
 
         await _context.SaveChangesAsync();
 
-        var result = await query.ToListAsync();
+        var createdPromotion = await _context.Promotions
+            .FirstOrDefaultAsync(a => a.Id == promotion.Id);
 
-        var promotionDTO = promotionToCreate.Adapt<PromotionDTO>();
+ 
+        var promotionDTO = createdPromotion.Adapt<PromotionDTO>();
 
         return promotionDTO;
     }
+
 
     public async Task<bool> Delete(int id)
     {
         var promotion = await _context.Promotions.FindAsync(id);
 
-        if (promotion is null) throw new NotFoundException($"Bank with id: {id} doest not exist");
+        if (promotion is null) throw new NotFoundException($"Promotion with id: {id} doest not exist");
 
         _context.Promotions.Remove(promotion);
 
@@ -53,9 +66,11 @@ public class PromotionRepository : IPromotionRepository
     public async Task<List<PromotionDTO>> GetFiltered(FilterPromotionModel filter)
     {
         var query = _context.Promotions
-                          .Include(a => a.Business)
-                          .AsQueryable();
+                         .Include(a => a.PromotionsEnterprises)
+                         .ThenInclude(a => a.Enterprise)
+                         .AsQueryable();
 
+        
         if (filter.Id is not null)
         {
             query = query.Where(x =>
@@ -78,23 +93,37 @@ public class PromotionRepository : IPromotionRepository
     public async Task<PromotionDTO> Update(UpdatePromotionModel model)
     {
         var query = _context.Promotions
-                         .Include(a => a.Business)
+                         .Include(a => a.PromotionsEnterprises)
+                         .ThenInclude(a => a.Enterprise)
                          .AsQueryable();
-
-        var promotion = await _context.Promotions.FindAsync(model.Id);
-
-        if (promotion is null) throw new Exception("Bank was not found");
-
-        model.Adapt(promotion);
-
-        _context.Promotions.Update(promotion);
-
-        await _context.SaveChangesAsync();
 
         var result = await query.ToListAsync();
 
-        var promotionDTO = promotion.Adapt<PromotionDTO>();
+        var promotion = await _context.Promotions
+        .Include(p => p.PromotionsEnterprises)
+        .FirstOrDefaultAsync(p => p.Id == model.Id);
 
+        if (promotion == null)
+        {
+            throw new NotFoundException("Promotion not found");
+        }
+
+        model.Adapt(promotion);
+
+        promotion.PromotionsEnterprises.Clear(); 
+
+        foreach (int enterpriseId in model.RelatedEnterpriseIds)
+        {
+            var promotionEnterprise = new PromotionEnterprise
+            {
+                PromotionId = promotion.Id,
+                EnterpriseId = enterpriseId
+            };
+            promotion.PromotionsEnterprises.Add(promotionEnterprise);
+        }
+
+        await _context.SaveChangesAsync();
+        var promotionDTO = promotion.Adapt<PromotionDTO>();
         return promotionDTO;
     }
 }

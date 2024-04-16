@@ -3,14 +3,14 @@ using FluentValidation;
 
 namespace Infrastructure.Validations;
 
-public class CreateBusinessModelValidation : AbstractValidator<CreateBusinessModel>
+public class CreateEnterpriseModelValidation : AbstractValidator<CreateEnterpriseModel>
 {
-    public CreateBusinessModelValidation()
+    public CreateEnterpriseModelValidation()
     {
         RuleFor(x => x.Name)
             .NotNull().WithMessage("Name cannot be null")
-            .NotEmpty().WithMessage("Name cannot be empty")
-            .MinimumLength(5).WithMessage("Name must have at least 5 characters");
+            .NotEmpty().WithMessage("Name cannot be empty");
+            
 
         RuleFor(x => x.Email)
             .EmailAddress();

@@ -35,7 +35,9 @@ public partial class BootcampContext : DbContext
 
     public virtual DbSet<Promotion> Promotions { get; set; }
 
-    public virtual DbSet<Business> Businesses { get; set; }
+    public virtual DbSet<Enterprise> Enterprises { get; set; }
+
+    public virtual DbSet<PromotionEnterprise> PromotionEnterprises { get; set; }
 
 
 
@@ -50,8 +52,9 @@ public partial class BootcampContext : DbContext
         modelBuilder.ApplyConfiguration(new CurrentAccountConfiguration());
         modelBuilder.ApplyConfiguration(new SavingAccountConfiguration());
         modelBuilder.ApplyConfiguration(new CreditCardConfiguration());
+        modelBuilder.ApplyConfiguration(new EnterpriseConfiguration());
         modelBuilder.ApplyConfiguration(new PromotionConfiguration());
-        modelBuilder.ApplyConfiguration(new BusinessConfiguration());
+        modelBuilder.ApplyConfiguration(new PromotionEnterpriseConfiguration());
 
 
 
