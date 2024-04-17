@@ -10,7 +10,6 @@ public class CreateEnterpriseModelValidation : AbstractValidator<CreateEnterpris
         RuleFor(x => x.Name)
             .NotNull().WithMessage("Name cannot be null")
             .NotEmpty().WithMessage("Name cannot be empty");
-            
 
         RuleFor(x => x.Email)
             .EmailAddress();

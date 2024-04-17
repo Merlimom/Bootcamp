@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(BootcampContext))]
-    [Migration("20240412172316_InitialMigrationAccountStatus")]
+    [Migration("20240417174431_InitialMigrationAccountStatus")]
     partial class InitialMigrationAccountStatus
     {
         /// <inheritdoc />
@@ -52,6 +52,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Holder")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("IsDeleted")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Number")
                         .IsRequired()
@@ -203,15 +206,15 @@ namespace Infrastructure.Migrations
                     b.Property<int>("AccountId")
                         .HasColumnType("integer");
 
-                    b.Property<decimal?>("Interest")
+                    b.Property<decimal>("Interest")
                         .HasPrecision(20, 5)
                         .HasColumnType("numeric(20,5)");
 
-                    b.Property<decimal?>("MonthAverage")
+                    b.Property<decimal>("MonthAverage")
                         .HasPrecision(20, 5)
                         .HasColumnType("numeric(20,5)");
 
-                    b.Property<decimal?>("OperationalLimit")
+                    b.Property<decimal>("OperationalLimit")
                         .HasPrecision(20, 5)
                         .HasColumnType("numeric(20,5)");
 
@@ -276,6 +279,35 @@ namespace Infrastructure.Migrations
                     b.ToTable("Customers");
                 });
 
+            modelBuilder.Entity("Core.Entities.Enterprise", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Enterprises");
+                });
+
             modelBuilder.Entity("Core.Entities.Movement", b =>
                 {
                     b.Property<int>("Id")
@@ -308,6 +340,47 @@ namespace Infrastructure.Migrations
                     b.HasIndex("AccountId");
 
                     b.ToTable("Movements");
+                });
+
+            modelBuilder.Entity("Core.Entities.Promotion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Discount")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("End")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Start")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Promotions");
+                });
+
+            modelBuilder.Entity("Core.Entities.PromotionEnterprise", b =>
+                {
+                    b.Property<int>("PromotionId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("EnterpriseId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("PromotionId", "EnterpriseId");
+
+                    b.HasIndex("EnterpriseId");
+
+                    b.ToTable("PromotionEnterprises");
                 });
 
             modelBuilder.Entity("Core.Entities.SavingAccount", b =>
@@ -409,6 +482,25 @@ namespace Infrastructure.Migrations
                     b.Navigation("Account");
                 });
 
+            modelBuilder.Entity("Core.Entities.PromotionEnterprise", b =>
+                {
+                    b.HasOne("Core.Entities.Enterprise", "Enterprise")
+                        .WithMany("PromotionsEnterprises")
+                        .HasForeignKey("EnterpriseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.Entities.Promotion", "Promotion")
+                        .WithMany("PromotionsEnterprises")
+                        .HasForeignKey("PromotionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Enterprise");
+
+                    b.Navigation("Promotion");
+                });
+
             modelBuilder.Entity("Core.Entities.SavingAccount", b =>
                 {
                     b.HasOne("Core.Entities.Account", "Account")
@@ -446,6 +538,16 @@ namespace Infrastructure.Migrations
                     b.Navigation("Accounts");
 
                     b.Navigation("CreditCards");
+                });
+
+            modelBuilder.Entity("Core.Entities.Enterprise", b =>
+                {
+                    b.Navigation("PromotionsEnterprises");
+                });
+
+            modelBuilder.Entity("Core.Entities.Promotion", b =>
+                {
+                    b.Navigation("PromotionsEnterprises");
                 });
 #pragma warning restore 612, 618
         }

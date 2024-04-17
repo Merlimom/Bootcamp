@@ -1,8 +1,9 @@
 ﻿using Core.Constants;
+using Core.Interfaces;
 
 namespace Core.Entities;
 
-public class Account
+public class Account 
 {
     public int Id { get; set; }
     public string Holder { get; set; } = string.Empty;
@@ -10,7 +11,6 @@ public class Account
     public AccountType AccountType { get; set; } = AccountType.Current;
 
     public decimal Balance { get; set; }
-    public AccountStatus AccountStatus { get; set; } = AccountStatus.Active;
 
 
     public int CurrencyId { get; set; }
@@ -19,8 +19,13 @@ public class Account
     public int CustomerId { get; set; }
     public Customer Customer { get; set; } = null!;
 
+    public IsDeletedStatus IsDeleted { get; set; } = IsDeletedStatus.False;
+    public AccountStatus AccountStatus { get; set; } = AccountStatus.Active;
+
+
     public SavingAccount? SavingAccount { get; set; }
     public CurrentAccount? CurrentAccount { get; set; }
+
 
     public virtual ICollection<Movement> Movements { get; set; } = new List<Movement>();
 }

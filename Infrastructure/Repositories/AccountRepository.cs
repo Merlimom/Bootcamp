@@ -67,15 +67,29 @@ public class AccountRepository : IAccountRepository
 
     public async Task<bool> Delete(int id)
     {
+
         var account = await _context.Accounts.FindAsync(id);
 
-        if (account is null) throw new Exception("Account not found");
+        if (account is null) throw new NotFoundException("Account with ID " + id + " was not found");
 
-        _context.Accounts.Remove(account);
+        account.IsDeleted = IsDeletedStatus.True;
 
+        _context.Accounts.Update(account);
+        await _context.SaveChangesAsync();
         var result = await _context.SaveChangesAsync();
-
         return result > 0;
+
+
+        //var account = await _context.Accounts.FindAsync(id);
+
+        //if (account is null) throw new Exception("Account not found");
+
+        //_context.Accounts.Remove(account);
+
+        //var result = await _context.SaveChangesAsync();
+
+        //return result > 0;
+
     }
 
     public async Task<List<AccountDTO>> GetFiltered(FilterAccountModel filter)

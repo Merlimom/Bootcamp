@@ -21,6 +21,7 @@ public class AccountConfiguration : IEntityTypeConfiguration<Account>
             .Property(e => e.Balance)
             .HasPrecision(20, 5);
 
+       
 
         entity
             .HasOne(account => account.Currency)

@@ -22,10 +22,16 @@ public class Customer
     public CustomerStatus CustomerStatus { get; set; } = CustomerStatus.Active;
 
     public int BankId { get; set; }
+
     public DateTime? Birth { get; set; }
 
     public virtual Bank Bank { get; set; } = null!;
+
     public ICollection<Account> Accounts { get; set; } = new List<Account>();
+
     public ICollection<CreditCard> CreditCards { get; set; } = new List<CreditCard>();
+
+    public ICollection<UserRequest> UserRequests { get; set; } = new List<UserRequest>();
+
 
 }

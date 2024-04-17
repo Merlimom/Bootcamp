@@ -9,4 +9,5 @@ public class CurrentAccount
 
     public int AccountId { get; set; }
     public Account Account { get; set; } = null!;
+
 }

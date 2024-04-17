@@ -39,6 +39,8 @@ public partial class BootcampContext : DbContext
 
     public virtual DbSet<PromotionEnterprise> PromotionEnterprises { get; set; }
 
+   public virtual DbSet<UserRequest> UserRequests { get; set; }
+
 
 
 
@@ -55,6 +57,7 @@ public partial class BootcampContext : DbContext
         modelBuilder.ApplyConfiguration(new EnterpriseConfiguration());
         modelBuilder.ApplyConfiguration(new PromotionConfiguration());
         modelBuilder.ApplyConfiguration(new PromotionEnterpriseConfiguration());
+        modelBuilder.ApplyConfiguration(new UserRequestConfiguration());
 
 
 
