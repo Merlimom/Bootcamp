@@ -9,14 +9,17 @@ public class UserRequestDTO
 
     public DateTime RequestDate { get; set; }
 
-    public DateTime ApprovalDate { get; set; }
+    public DateTime? ApprovalDate { get; set; }
 
     public string RequestStatus { get; set; } = string.Empty;
 
-    public ProductDTO Product { get; set; } = null!;
+    public string Description { get; set; } = string.Empty;
 
-    public CurrencyDTO Currency { get; set; } = null!;
+    public string Product { get; set; } = null!;
 
-    public CustomerDTO Customer { get; set; } = null!;
+    public string Currency { get; set; } = null!;
+
+    public string Customer { get; set; } = null!;
+
 
 }

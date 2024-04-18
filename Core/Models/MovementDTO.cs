@@ -1,8 +1,9 @@
 ﻿using Core.Constants;
+using Core.Entities;
 
-namespace Core.Entities;
+namespace Core.Models;
 
-public class Movement
+public class MovementDTO
 {
     public int Id { get; set; }
 
@@ -20,5 +21,5 @@ public class Movement
 
     public int AccountSourceId { get; set; }
 
-    public Account Account { get; set; } = null!;
+    public AccountDTO Account { get; set; } = null!;
 }

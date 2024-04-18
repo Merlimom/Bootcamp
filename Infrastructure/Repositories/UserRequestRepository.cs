@@ -19,21 +19,22 @@ public class UserRequestRepository : IUserRequestRepository
 
     public async Task<UserRequestDTO> Add(CreateUserRequestModel model)
     {
-
-        var query = _context.UserRequests
-                  .Include(a => a.Currency)
-                  .Include(a => a.Customer)
-                  .ThenInclude(a => a.Bank)
-                  .Include(a => a.Product)
-                  .AsQueryable();
-
-        var result = await query.ToListAsync();
+        //verificar esto 
+        //var result = await query.ToListAsync();
 
         var userRequestToCreate = model.Adapt<UserRequest>();
 
         _context.UserRequests.Add(userRequestToCreate);
 
         await _context.SaveChangesAsync();
+
+
+        var query = await _context.UserRequests
+         .Include(a => a.Currency)
+         .Include(a => a.Product)
+         .Include(a => a.Customer)
+         .ThenInclude(a => a.Bank)
+         .SingleOrDefaultAsync(r => r.Id == userRequestToCreate.Id);
 
         var userRequestDTO = userRequestToCreate.Adapt<UserRequestDTO>();
 

@@ -4,7 +4,7 @@ public class CreateUserRequestModel
 {
     public DateTime RequestDate { get; set; }
 
-    public DateTime ApprovalDate { get; set; }
+    public string Description { get; set; } = string.Empty;
 
     public int CurrencyId { get; set; }
 

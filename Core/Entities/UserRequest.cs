@@ -7,7 +7,10 @@ public class UserRequest
     public int Id { get; set; }
 
     public DateTime RequestDate { get; set; }
-    public DateTime ApprovalDate { get; set; }
+
+    public DateTime? ApprovalDate { get; set; } 
+
+    public string Description { get; set; } = string.Empty;
 
     public RequestStatus RequestStatus { get; set; } = RequestStatus.Pending;
 

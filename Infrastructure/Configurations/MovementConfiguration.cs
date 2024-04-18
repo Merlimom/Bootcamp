@@ -14,8 +14,8 @@ public class MovementConfiguration : IEntityTypeConfiguration<Movement>
             .HasName("Movement_pkey");
 
         entity
-            .Property(e => e.Destination)
-            .HasMaxLength(100).IsRequired();
+            .Property(e => e.Description)
+            .HasMaxLength(100);
 
         entity
             .Property(e => e.Amount)
@@ -25,10 +25,14 @@ public class MovementConfiguration : IEntityTypeConfiguration<Movement>
             .Property(e => e.TransferredDateTime);
             
 
+        entity.HasOne(d => d.Account)
+            .WithMany(p => p.Movements)
+            .HasForeignKey(d => d.AccountDestinationId);
+
 
         entity.HasOne(d => d.Account)
             .WithMany(p => p.Movements)
-            .HasForeignKey(d => d.AccountId);
-            
+            .HasForeignKey(d => d.AccountSourceId);
+
     }
 }

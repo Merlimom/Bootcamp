@@ -13,12 +13,10 @@ public class UserRequestConfiguration : IEntityTypeConfiguration<UserRequest>
             .HasKey(e => e.Id)
             .HasName("UserRequest_pkey");
 
-        entity
-            .Property(e => e.RequestDate)
-            .IsRequired();
 
         entity
-            .Property(e => e.ApprovalDate)
+            .Property(e => e.Description)
+            .HasMaxLength(100)
             .IsRequired();
 
         entity

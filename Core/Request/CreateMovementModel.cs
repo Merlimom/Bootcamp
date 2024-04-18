@@ -1,11 +1,10 @@
 ﻿using Core.Constants;
+using Core.Models;
 
-namespace Core.Entities;
+namespace Core.Request;
 
-public class Movement
+public class CreateMovementModel
 {
-    public int Id { get; set; }
-
     public EMovementType MovementType { get; set; } = EMovementType.Transfer;
 
     public string Description { get; set; } = string.Empty;
@@ -19,6 +18,4 @@ public class Movement
     public int AccountDestinationId { get; set; }
 
     public int AccountSourceId { get; set; }
-
-    public Account Account { get; set; } = null!;
 }
