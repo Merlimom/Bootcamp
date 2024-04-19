@@ -20,18 +20,17 @@ public class CreditCardService : ICreditCardService
 
     public async Task<CreditCardDTO> Add(CreateCreditCardModel model)
     {
-        bool customerDoesntExist = await _creditCardRepository.VerifyCustomerExists(model.CustomerId);
-        if (customerDoesntExist)
+        var (customerExists, currencyExists) = await _creditCardRepository.VerifyCustomerAndCurrencyExist(model.CustomerId, model.CurrencyId);
+
+        if (!customerExists)
         {
-            throw new BusinessLogicException($"Customer {model.CustomerId} does not exist");
+            throw new BusinessLogicException($"Customer {model.CustomerId} does not exist.");
         }
 
-        bool currencyDoesntExist = await _creditCardRepository.VerifyCurrencyExists(model.CurrencyId);
-        if (currencyDoesntExist)
+        if (!currencyExists)
         {
-            throw new BusinessLogicException($"Currency {model.CurrencyId} does not exist");
+            throw new BusinessLogicException($"Currency {model.CurrencyId} does not exist.");
         }
-
         return await _creditCardRepository.Add(model);
     }
 

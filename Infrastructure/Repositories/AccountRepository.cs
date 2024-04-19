@@ -24,12 +24,12 @@ public class AccountRepository : IAccountRepository
 
         var account = model.Adapt<Account>();
 
-        if (account.AccountType == AccountType.Saving)
+        if (account.AccountType == EAccountType.Saving)
         {
             account.SavingAccount = model.CreateSavingAccountModel.Adapt<SavingAccount>();
         }
 
-        if (account.AccountType == AccountType.Current)
+        if (account.AccountType == EAccountType.Current)
         {
             account.CurrentAccount = model.CreateCurrentAccountModel.Adapt<CurrentAccount>();
         }
@@ -67,29 +67,17 @@ public class AccountRepository : IAccountRepository
 
     public async Task<bool> Delete(int id)
     {
-
         var account = await _context.Accounts.FindAsync(id);
 
         if (account is null) throw new NotFoundException("Account with ID " + id + " was not found");
 
-        account.IsDeleted = IsDeletedStatus.True;
+        account.IsDeleted = EIsDeletedStatus.True;
 
-        _context.Accounts.Update(account);
-        await _context.SaveChangesAsync();
+        account.AccountStatus = EAccountStatus.Inactive;
+
         var result = await _context.SaveChangesAsync();
-        return result > 0;
 
-
-        //var account = await _context.Accounts.FindAsync(id);
-
-        //if (account is null) throw new Exception("Account not found");
-
-        //_context.Accounts.Remove(account);
-
-        //var result = await _context.SaveChangesAsync();
-
-        //return result > 0;
-
+        return result > 0; ;
     }
 
     public async Task<List<AccountDTO>> GetFiltered(FilterAccountModel filter)
@@ -164,19 +152,11 @@ public class AccountRepository : IAccountRepository
         return accountDTO;
     }
 
-    public async Task<bool> VerifyCustomerExists(int id)
+  public async Task<(bool customerExists, bool currencyExists)> VerifyCustomerAndCurrencyExist(int customerId, int currencyId)
     {
-        var customerDoesntExist = await _context.Customers.AnyAsync(customer => customer.Id == id);
+        var customerExists = await _context.Customers.AnyAsync(c => c.Id == customerId);
+        var currencyExists = await _context.Currencies.AnyAsync(c => c.Id == currencyId);
 
-        return !customerDoesntExist;
-
-    }
-
-    public async Task<bool> VerifyCurrencyExists(int id)
-    {
-        var currencyDoesntExist = await _context.Currencies.AnyAsync(currency => currency.Id == id);
-
-        return !currencyDoesntExist;
-
+        return (customerExists, currencyExists);
     }
 }

@@ -31,7 +31,7 @@ public class CreateCreditCardModelValidation : AbstractValidator<CreateCreditCar
             .Must(IsValidCvvNumber).WithMessage("Card number must have 3 numeric digits");
 
         RuleFor(x => x.CreditCardStatus)
-            .Must(x => Enum.IsDefined(typeof(CreditCardStatus), x))
+            .Must(x => Enum.IsDefined(typeof(ECreditCardStatus), x))
             .WithMessage("Invalid CreditCard Status");
 
         RuleFor(x => x.CreditLimit)
@@ -50,7 +50,7 @@ public class CreateCreditCardModelValidation : AbstractValidator<CreateCreditCar
 
     private bool BeValidCreditCardStatus(int arg)
     {
-        return Enum.IsDefined(typeof(CreditCardStatus), arg);
+        return Enum.IsDefined(typeof(ECreditCardStatus), arg);
     }
 
     private bool IsValidCreditCardNumber(string creditCardNumber)

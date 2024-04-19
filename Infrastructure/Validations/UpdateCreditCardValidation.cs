@@ -43,7 +43,7 @@ public class UpdateCreditCardValidation : AbstractValidator<UpdateCreditCardMode
 
     private bool BeValidCreditCardStatus(int arg)
     {
-        return Enum.IsDefined(typeof(CreditCardStatus), arg);
+        return Enum.IsDefined(typeof(ECreditCardStatus), arg);
     }
 
     private bool IsValidCreditCardNumber(string creditCardNumber)

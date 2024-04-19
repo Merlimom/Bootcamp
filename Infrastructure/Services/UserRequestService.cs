@@ -18,16 +18,16 @@ public class UserRequestService : IUserRequestService
 
     public async Task<UserRequestDTO> Add(CreateUserRequestModel model)
     {
-        bool customerDoesntExist = await _userRequestRepository.VerifyCustomerExists(model.CustomerId);
-        if (customerDoesntExist)
+        var (customerExists, currencyExists) = await _userRequestRepository.VerifyCustomerAndCurrencyExist(model.CustomerId, model.CurrencyId);
+
+        if (!customerExists)
         {
-            throw new BusinessLogicException($"Customer {model.CustomerId} does not exist");
+            throw new BusinessLogicException($"Customer {model.CustomerId} does not exist.");
         }
 
-        bool currencyDoesntExist = await _userRequestRepository.VerifyCurrencyExists(model.CurrencyId);
-        if (currencyDoesntExist)
+        if (!currencyExists)
         {
-            throw new BusinessLogicException($"Currency {model.CurrencyId} does not exist");
+            throw new BusinessLogicException($"Currency {model.CurrencyId} does not exist.");
         }
         return await _userRequestRepository.Add(model);
     }

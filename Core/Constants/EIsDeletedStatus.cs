@@ -1,6 +1,6 @@
 ﻿namespace Core.Constants;
 
-public enum IsDeletedStatus
+public enum EIsDeletedStatus
 {
     True,
     False

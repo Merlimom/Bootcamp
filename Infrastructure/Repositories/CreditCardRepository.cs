@@ -121,19 +121,11 @@ public class CreditCardRepository : ICreditCardRepository
         return creditcardDTO;
     }
 
-    public async Task<bool> VerifyCustomerExists(int id)
+    public async Task<(bool customerExists, bool currencyExists)> VerifyCustomerAndCurrencyExist(int customerId, int currencyId)
     {
-        var customerDoesntExist = await _context.Customers.AnyAsync(customer => customer.Id == id);
+        var customerExists = await _context.Customers.AnyAsync(c => c.Id == customerId);
+        var currencyExists = await _context.Currencies.AnyAsync(c => c.Id == currencyId);
 
-        return !customerDoesntExist;
-
-    }
-
-    public async Task<bool> VerifyCurrencyExists(int id)
-    {
-        var currencyDoesntExist = await _context.Currencies.AnyAsync(currency => currency.Id == id);
-
-        return !currencyDoesntExist;
-
+        return (customerExists, currencyExists);
     }
 }

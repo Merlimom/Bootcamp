@@ -17,7 +17,7 @@ public class CustomerMappingConfiguration : IRegister
             .Map(dest => dest.Address, src => src.Address)
             .Map(dest => dest.Mail, src => src.Mail)
             .Map(dest => dest.Phone, src => src.Phone)
-            .Map(dest => dest.CustomerStatus, src => Enum.Parse<CustomerStatus>(src.CustomerStatus))
+            .Map(dest => dest.CustomerStatus, src => Enum.Parse<ECustomerStatus>(src.CustomerStatus))
             .Map(dest => dest.BankId, src => src.BankId)
             .Map(dest => dest.Birth, src => src.Birth);
 

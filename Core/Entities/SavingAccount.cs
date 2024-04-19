@@ -7,7 +7,7 @@ public class SavingAccount
     public int Id { get; set; }
 
 
-    public SavingType SavingType { get; set; } = SavingType.Insight;
+    public ESavingType SavingType { get; set; } = ESavingType.Insight;
 
     public string HolderName { get; set; } = string.Empty;
 

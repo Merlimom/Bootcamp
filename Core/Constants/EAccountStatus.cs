@@ -1,6 +1,6 @@
 ﻿namespace Core.Constants;
 
-public enum AccountStatus
+public enum EAccountStatus
 {
     Active,
     Inactive

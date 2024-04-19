@@ -13,9 +13,15 @@ public class CreateMovementModel
 
     public DateTime? TransferredDateTime { get; set; }
 
-    public TransferStatus TransferStatus { get; set; } = TransferStatus.Pending;
+    public ETransferStatus TransferStatus { get; set; } = ETransferStatus.Pending;
 
     public int AccountDestinationId { get; set; }
 
     public int AccountSourceId { get; set; }
+
+    public string? DestinationAccountNumber { get; set; }
+    public string?DestinationDocumentNumber { get; set; }
+
+    public int CurrencyId { get; set; }
+    public int DestinationBankId { get; set; }
 }

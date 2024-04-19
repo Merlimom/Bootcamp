@@ -14,11 +14,11 @@ public class Movement
 
     public DateTime? TransferredDateTime { get; set; }
 
-    public TransferStatus TransferStatus { get; set; } = TransferStatus.Pending;
+    public ETransferStatus TransferStatus { get; set; } = ETransferStatus.Pending;
 
     public int AccountDestinationId { get; set; }
 
     public int AccountSourceId { get; set; }
 
-    public Account Account { get; set; } = null!;
+    public virtual Account Account { get; set; } = null!;
 }

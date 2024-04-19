@@ -28,13 +28,13 @@ public class CreateAccountModelValidation : AbstractValidator<CreateAccountModel
             .NotNull().WithMessage("Currency Id cannot be null")
             .NotEmpty().WithMessage("Currency Id cannot be empty");
 
-        When(x => x.AccountType == AccountType.Saving, () =>
+        When(x => x.AccountType == EAccountType.Saving, () =>
         {
             RuleFor(x => x.CreateSavingAccountModel.SavingType)
                  .NotNull().WithMessage("SavingType is required for Savings account");
         });
 
-        When(x => x.AccountType == AccountType.Current, () =>
+        When(x => x.AccountType == EAccountType.Current, () =>
         {
             RuleFor(x => x.CreateCurrentAccountModel.OperationalLimit)
                 .NotEmpty().WithMessage("OperationalLimit is required for Current account");
@@ -49,11 +49,11 @@ public class CreateAccountModelValidation : AbstractValidator<CreateAccountModel
 
     private bool BeValidAccountStatus(int arg)
     {
-        return Enum.IsDefined(typeof(AccountStatus), arg);
+        return Enum.IsDefined(typeof(EAccountStatus), arg);
     }
 
-    private bool IsValidAccountType(AccountType accountType)
+    private bool IsValidAccountType(EAccountType accountType)
     {
-        return accountType == AccountType.Saving || accountType == AccountType.Current;
+        return accountType == EAccountType.Saving || accountType == EAccountType.Current;
     }
 }

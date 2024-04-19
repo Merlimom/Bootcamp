@@ -19,7 +19,7 @@ public class Customer
 
     public string? Phone { get; set; }
 
-    public CustomerStatus CustomerStatus { get; set; } = CustomerStatus.Active;
+    public ECustomerStatus CustomerStatus { get; set; } = ECustomerStatus.Active;
 
     public int BankId { get; set; }
 

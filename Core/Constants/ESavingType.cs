@@ -1,6 +1,6 @@
 ﻿namespace Core.Constants;
 
-public enum SavingType
+public enum ESavingType
 {
     Permanent,
     Insight

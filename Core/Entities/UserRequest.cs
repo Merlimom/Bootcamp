@@ -12,7 +12,7 @@ public class UserRequest
 
     public string Description { get; set; } = string.Empty;
 
-    public RequestStatus RequestStatus { get; set; } = RequestStatus.Pending;
+    public ERequestStatus RequestStatus { get; set; } = ERequestStatus.Pending;
 
     public int ProductId { get; set; }
     public Product Product { get; set; } = null!;

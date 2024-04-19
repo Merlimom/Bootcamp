@@ -2,6 +2,7 @@
 using Core.Models;
 using Core.Request;
 using Mapster;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Mappings;
 
@@ -24,8 +25,17 @@ public class MovementMappingConfiguration : IRegister
            .Map(dest => dest.Amount, src => src.Amount)
            .Map(dest => dest.TransferredDateTime, src => src.TransferredDateTime)
            .Map(dest => dest.TransferStatus, src => src.TransferStatus)
-           //ver q onda 
-           .Map(dest => dest.AccountSourceId, src => src.Account)
-           .Map(dest => dest.AccountDestinationId, src => src.Account);
+           .Map(dest => dest.AccountSource, src => src.AccountSourceId)
+           .Map(dest => dest.AccountDestination, src => src.AccountDestinationId);
+           //.Map(dest => dest.Account, src => new AccountDTO
+           //  {
+           //      Id = src.Account.Id,
+           //      Holder = src.Account.Holder,
+           //      Currency = new CurrencyDTO { Name = src.Account.Currency.Name }, 
+           //      Customer = new CustomerDTO { Name = $"{src.Account.Customer.Name} {src.Account.Customer.Lastname}" }
+           //});
+
+
+
     }
 }

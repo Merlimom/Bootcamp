@@ -11,7 +11,7 @@ public class CreditCardDTO
     public DateTime ExpirationDate { get; set; }
     public string CardNumber { get; set; } = string.Empty;
     public int Cvv { get; set; }
-    public CreditCardStatus CreditCardStatus { get; set; } = CreditCardStatus.Enabled;
+    public ECreditCardStatus CreditCardStatus { get; set; } = ECreditCardStatus.Enabled;
 
 
     public decimal CreditLimit { get; set; }

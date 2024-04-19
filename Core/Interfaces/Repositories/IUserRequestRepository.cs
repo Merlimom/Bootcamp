@@ -3,10 +3,9 @@ using Core.Request;
 
 namespace Core.Interfaces.Repositories;
 
-public  interface IUserRequestRepository
+public interface IUserRequestRepository
 {
     Task<List<UserRequestDTO>> GetAll();
     Task<UserRequestDTO> Add(CreateUserRequestModel model);
-    Task<bool> VerifyCustomerExists(int id);
-    Task<bool> VerifyCurrencyExists(int id);
+    Task<(bool customerExists, bool currencyExists)> VerifyCustomerAndCurrencyExist(int customerId, int currencyId);
 }

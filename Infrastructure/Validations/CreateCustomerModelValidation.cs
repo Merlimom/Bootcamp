@@ -18,7 +18,7 @@ public class CreateCustomerModelValidation : AbstractValidator<CreateCustomerMod
             .NotEmpty().WithMessage("Bank Id cannot be empty");
 
         RuleFor(x => x.CustomerStatus)
-            .Must(x => Enum.IsDefined(typeof(CreditCardStatus), x))
+            .Must(x => Enum.IsDefined(typeof(ECreditCardStatus), x))
             .WithMessage("Invalid CreditCard Status");
 
         RuleFor(x => x.Mail)
@@ -30,6 +30,6 @@ public class CreateCustomerModelValidation : AbstractValidator<CreateCustomerMod
 
     private bool BeValidCustomerStatus(int arg)
     {
-        return Enum.IsDefined(typeof(CustomerStatus), arg);
+        return Enum.IsDefined(typeof(ECustomerStatus), arg);
     }
 }

@@ -21,7 +21,7 @@ public class UpdateAccountValidation : AbstractValidator<UpdateAccountModel>
             .NotEmpty().WithMessage("Balance cannot be empty");
 
         RuleFor(x => x.AccountStatus)
-           .Must(x => Enum.IsDefined(typeof(AccountStatus), x))
+           .Must(x => Enum.IsDefined(typeof(EAccountStatus), x))
            .WithMessage("Invalid Account Status");
 
         RuleFor(x => x.CustomerId)
@@ -35,6 +35,6 @@ public class UpdateAccountValidation : AbstractValidator<UpdateAccountModel>
 
     private bool BeValidAccountStatus(int arg)
     {
-        return Enum.IsDefined(typeof(AccountStatus), arg);
+        return Enum.IsDefined(typeof(EAccountStatus), arg);
     }
 }

@@ -15,11 +15,11 @@ public class MovementDTO
 
     public DateTime? TransferredDateTime { get; set; }
 
-    public TransferStatus TransferStatus { get; set; } = TransferStatus.Pending;
+    public ETransferStatus TransferStatus { get; set; } = ETransferStatus.Pending;
 
-    public int AccountDestinationId { get; set; }
+    public string AccountDestination { get; set; } = string.Empty;
 
-    public int AccountSourceId { get; set; }
+    public string AccountSource { get; set; } = string.Empty;
 
     public AccountDTO Account { get; set; } = null!;
 }

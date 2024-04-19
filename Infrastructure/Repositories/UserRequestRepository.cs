@@ -19,8 +19,6 @@ public class UserRequestRepository : IUserRequestRepository
 
     public async Task<UserRequestDTO> Add(CreateUserRequestModel model)
     {
-        //verificar esto 
-        //var result = await query.ToListAsync();
 
         var userRequestToCreate = model.Adapt<UserRequest>();
 
@@ -60,19 +58,11 @@ public class UserRequestRepository : IUserRequestRepository
         return userRequestsDTO;
     }
 
-    public async Task<bool> VerifyCustomerExists(int id)
+    public async Task<(bool customerExists, bool currencyExists)> VerifyCustomerAndCurrencyExist(int customerId, int currencyId)
     {
-        var customerDoesntExist = await _context.Customers.AnyAsync(customer => customer.Id == id);
+        var customerExists = await _context.Customers.AnyAsync(c => c.Id == customerId);
+        var currencyExists = await _context.Currencies.AnyAsync(c => c.Id == currencyId);
 
-        return !customerDoesntExist;
-
-    }
-
-    public async Task<bool> VerifyCurrencyExists(int id)
-    {
-        var currencyDoesntExist = await _context.Currencies.AnyAsync(currency => currency.Id == id);
-
-        return !currencyDoesntExist;
-
+        return (customerExists, currencyExists);
     }
 }

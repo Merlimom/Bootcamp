@@ -1,6 +1,6 @@
 ﻿namespace Core.Constants;
 
-public enum RequestStatus
+public enum ERequestStatus
 {
     Done,
     Pending,
