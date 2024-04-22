@@ -11,8 +11,8 @@ public class AccountDTO
     public EAccountType AccountType { get; set; } = EAccountType.Current;
     public decimal Balance { get; set; }
     public string AccountStatus { get; set; } = string.Empty;
-    public CurrencyDTO Currency { get; set; } = null!;
-    public CustomerDTO Customer { get; set; } = null!;
+    public string Currency { get; set; } = null!;
+    public string Customer { get; set; } = null!;
 
     public SavingAccountDTO? SavingAccount { get; set; }
     public CurrentAccountDTO? CurrentAccount { get; set; }

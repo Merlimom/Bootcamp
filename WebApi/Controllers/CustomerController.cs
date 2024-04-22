@@ -44,12 +44,4 @@ public class CustomerController : BaseApiController
     {
         return Ok(await _customerService.Delete(id));
     }
-
-    [HttpGet("all")]
-    public async Task<IActionResult> GetAll()
-    {
-        var customers = await _customerService.GetAll();
-        return Ok(customers);
-    }
-
 }

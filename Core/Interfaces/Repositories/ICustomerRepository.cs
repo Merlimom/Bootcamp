@@ -11,6 +11,5 @@ public interface ICustomerRepository
     Task<CustomerDTO> GetById(int id);
     Task<CustomerDTO> Update(UpdateCustomerModel model);
     Task<bool> Delete(int id);
-    Task<List<CustomerDTO>> GetAll();
     Task<bool> NameIsAlreadyTaken(string name);
 }

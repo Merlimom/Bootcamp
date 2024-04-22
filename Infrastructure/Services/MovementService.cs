@@ -1,51 +1,49 @@
-﻿using Core.Constants;
-using Core.Entities;
+﻿
+using Core.Constants;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Core.Models;
 using Core.Request;
-using Infrastructure.Contexts;
-using Infrastructure.Repositories;
-using Microsoft.EntityFrameworkCore;
+using FluentValidation;
 
 namespace Infrastructure.Services;
 
 public class MovementService : IMovementService
 {
     private readonly IMovementRepository _movementRepository;
+    private readonly ITransferValidationService _validationService;
 
-    public MovementService(IMovementRepository movementRepository)
+    public MovementService(IMovementRepository movementRepository, ITransferValidationService validationService)
     {
-        _movementRepository = movementRepository;
+        _movementRepository = movementRepository; // Inyectado
+        _validationService = validationService; // Inyectado
     }
-
     public async Task<MovementDTO> Add(CreateMovementModel model)
     {
-        bool isValid = await ValidateTransfer(model);
-
+        bool isValid = await _validationService.ValidateTransfer(model.AccountSourceId, model.AccountDestinationId, model.Amount,
+                                                                 model.DestinationBankId, model.DestinationDocumentNumber,
+                                                                 model.DestinationAccountNumber, model.CurrencyId);
         if (!isValid)
         {
-            throw new Exception("Movement validation failed.");
+            throw new ValidationException("Movement validation failed.");
         }
 
-        // Agregar el movimiento si la validación es exitosa
-        var result = await _movementRepository.Add(model);
-        return result;
-    }
+        //if (model.MovementType == EMovementType.Deposit)
+        //{
+        //    await _movementRepository.ProcessDeposit(model);
+        //}
 
+        //if (model.MovementType == EMovementType.Withdrawal)
+        //{
+        //    await _movementRepository.ProcessWithdrawal(model);
+        //}
 
-    private async Task<bool> ValidateTransfer(CreateMovementModel model)
-    {
-        // Llamar a las validaciones necesarias en el repositorio o en otros servicios
-        bool isTransferValid = await _movementRepository.ValidateTransfer(model.AccountSourceId, model.AccountDestinationId, model.Amount);
-        // Agrega más validaciones según sea necesario
-
-        // Devuelve true si todas las validaciones son exitosas, de lo contrario, devuelve false
-        return isTransferValid;
+        return await _movementRepository.Add(model);
     }
 
     public async Task<List<MovementDTO>> GetAll()
     {
         return await _movementRepository.GetAll();
     }
+
 }

@@ -34,11 +34,6 @@ public class CustomerService : ICustomerService
 
     }
 
-    public async Task<List<CustomerDTO>> GetAll()
-    {
-        return await _customerRepository.GetAll();
-    }
-
     public async Task<CustomerDTO> GetById(int id)
     {
         return await _customerRepository.GetById(id);

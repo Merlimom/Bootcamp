@@ -100,17 +100,6 @@ public class CustomerRepository : ICustomerRepository
         return result > 0;
     }
 
-    public async Task<List<CustomerDTO>> GetAll()
-    {
-        var banks = await _context.Banks.ToListAsync();
-
-        var customers = await _context.Customers.ToListAsync();
-
-        var customersDTO = customers.Adapt<List<CustomerDTO>>();
-
-        return customersDTO;
-    }
-
     public async Task<CustomerDTO> GetById(int id)
     {
         var banks= await _context.Banks.ToListAsync();

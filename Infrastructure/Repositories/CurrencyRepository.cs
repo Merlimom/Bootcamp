@@ -45,17 +45,6 @@ public class CurrencyRepository : ICurrencyRepository
         return result > 0;
     }
 
-    public async Task<List<CurrencyDTO>> GetAll()
-    {
-        //var banks = await _context.Banks.ToListAsync();
-
-        var currencies = await _context.Currencies.ToListAsync();
-
-        var currencyDTO = currencies.Adapt<List<CurrencyDTO>>();
-
-        return currencyDTO;
-    }
-
     public async Task<CurrencyDTO> GetById(int id)
     {
         //var banks = await _context.Banks.ToListAsync();

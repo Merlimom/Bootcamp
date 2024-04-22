@@ -1,7 +1,5 @@
 ﻿using Core.Interfaces.Services;
 using Core.Request;
-using Core.Requests;
-using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
@@ -44,12 +42,5 @@ public class CurrencyController : BaseApiController
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
         return Ok(await _service.Delete(id));
-    }
-
-    [HttpGet("all")]
-    public async Task<IActionResult> GetAll()
-    {
-        var currencies = await _service.GetAll();
-        return Ok(currencies);
     }
 }

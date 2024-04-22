@@ -29,6 +29,12 @@ public class UserRequestService : IUserRequestService
         {
             throw new BusinessLogicException($"Currency {model.CurrencyId} does not exist.");
         }
+
+        var productExists = await _userRequestRepository.VerifyProductExists(model.ProductId);
+        if (!productExists)
+        {
+            throw new BusinessLogicException($"Product {model.ProductId} does not exist.");
+        }
         return await _userRequestRepository.Add(model);
     }
 

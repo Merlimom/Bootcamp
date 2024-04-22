@@ -27,11 +27,6 @@ public class CurrencyService : ICurrencyService
         return await _currencyRepository.Delete(id);
     }
 
-    public async Task<List<CurrencyDTO>> GetAll()
-    {
-        return await _currencyRepository.GetAll();
-    }
-
     public async Task<CurrencyDTO> GetById(int id)
     {
         return await _currencyRepository.GetById(id);

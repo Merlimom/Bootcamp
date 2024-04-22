@@ -11,5 +11,4 @@ public interface ICurrencyRepository
     Task<CurrencyDTO> GetById(int id);
     Task<CurrencyDTO> Update(UpdateCurrencyModel model);
     Task<bool> Delete(int id);
-    Task<List<CurrencyDTO>> GetAll();
 }

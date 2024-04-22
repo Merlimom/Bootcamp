@@ -1,7 +1,6 @@
 ﻿using Core.Constants;
 using Core.Request;
 using FluentValidation;
-using System.Runtime.CompilerServices;
 
 namespace Infrastructure.Validetions;
 
@@ -18,8 +17,8 @@ public class CreateCustomerModelValidation : AbstractValidator<CreateCustomerMod
             .NotEmpty().WithMessage("Bank Id cannot be empty");
 
         RuleFor(x => x.CustomerStatus)
-            .Must(x => Enum.IsDefined(typeof(ECreditCardStatus), x))
-            .WithMessage("Invalid CreditCard Status");
+            .Must(x => Enum.IsDefined(typeof(ECustomerStatus), x))
+            .WithMessage("Invalid Customer Status");
 
         RuleFor(x => x.Mail)
           .EmailAddress();
@@ -28,8 +27,8 @@ public class CreateCustomerModelValidation : AbstractValidator<CreateCustomerMod
             .NotNull().WithMessage("Document Number cannot be null");    
     }
 
-    private bool BeValidCustomerStatus(int arg)
-    {
-        return Enum.IsDefined(typeof(ECustomerStatus), arg);
-    }
+    //private bool BeValidCustomerStatus(int arg)
+    //{
+    //    return Enum.IsDefined(typeof(ECustomerStatus), arg);
+    //}
 }

@@ -33,9 +33,9 @@ public class AccountMappingConfiguration : IRegister
             .Map(dest => dest.Number, src => src.Number)
             .Map(dest => dest.AccountType, src => src.AccountType)
             .Map(dest => dest.Balance, src => src.Balance)
-            //.Map(dest => dest.AccountStatus, src => src.AccountStatus.ToString())
-            .Map(dest => dest.Currency, src => src.Currency)
-            .Map(dest => dest.Customer, src => src.Customer)
+             .Map(dest => dest.AccountStatus, src => src.AccountStatus.ToString())
+            .Map(dest => dest.Customer, src => $"{src.Customer.Name} {src.Customer.Lastname}")
+            .Map(dest => dest.Currency, src => src.Currency.Name)
 
             .Map(dest => dest.SavingAccount, src =>
                 src.SavingAccount != null

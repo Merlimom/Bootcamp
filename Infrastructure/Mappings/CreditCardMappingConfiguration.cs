@@ -38,7 +38,7 @@ public class CreditCardMappingConfiguration : IRegister
             .Map(dest => dest.AvailableCredit, src => src.AvailableCredit)
             .Map(dest => dest.CurrentDebt, src => src.CurrentDebt)
             .Map(dest => dest.InterestRate, src => src.InterestRate)
-            .Map(dest => dest.Customer, src => src.Customer)
-            .Map(dest => dest.Currency, src => src.Currency);
+            .Map(dest => dest.Customer, src => $"{src.Customer.Name} {src.Customer.Lastname}")
+            .Map(dest => dest.Currency, src => src.Currency.Name);
     }
 }

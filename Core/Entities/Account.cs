@@ -28,4 +28,7 @@ public class Account
 
 
     public virtual ICollection<Movement> Movements { get; set; } = new List<Movement>();
+    public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
+    public virtual ICollection<Deposit> Deposits { get; set; } = new List<Deposit>();
+
 }

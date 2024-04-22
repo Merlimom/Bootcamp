@@ -12,5 +12,4 @@ public interface ICustomerService
     Task<CustomerDTO> GetById(int id);
     Task<CustomerDTO> Update(UpdateCustomerModel model);
     Task<bool> Delete(int id);
-    Task<List<CustomerDTO>> GetAll();
 }

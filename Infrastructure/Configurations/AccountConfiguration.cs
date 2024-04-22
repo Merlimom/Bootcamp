@@ -44,6 +44,15 @@ public class AccountConfiguration : IEntityTypeConfiguration<Account>
             .WithOne(movement => movement.Account)
             .HasForeignKey(movement => movement.AccountSourceId);
 
+        entity
+           .HasMany(account => account.Payments)
+           .WithOne(payment => payment.Account)
+           .HasForeignKey(payment => payment.AccountId);
+
+        entity
+          .HasMany(account => account.Deposits)
+          .WithOne(deposit => deposit.Account)
+          .HasForeignKey(deposit => deposit.AccountId);
 
         entity
             .HasOne(account => account.SavingAccount)

@@ -9,5 +9,4 @@ public class Product
     public string Name { get; set; } = string.Empty;
 
     public ICollection<UserRequest> UserRequests { get; set; } = new List<UserRequest>();
-
 }

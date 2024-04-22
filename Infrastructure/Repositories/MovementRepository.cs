@@ -1,13 +1,14 @@
-﻿using Core.Constants;
+﻿
+using Core.Constants;
 using Core.Entities;
+using Core.Exceptions;
 using Core.Interfaces.Repositories;
 using Core.Models;
 using Core.Request;
+using FluentValidation;
 using Infrastructure.Contexts;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-using Core.Exceptions;
 
 
 namespace Infrastructure.Repositories;
@@ -21,23 +22,9 @@ public class MovementRepository : IMovementRepository
         _context = context;
     }
 
-
     public async Task<MovementDTO> Add(CreateMovementModel model)
     {
-        // Validar la transferencia
-        bool isValid = await ValidateTransfer(model.AccountSourceId, model.AccountDestinationId, model.Amount);
-
-        if (!isValid)
-        {
-            throw new ValidationException("Movement validation failed.");
-        }
-
-        var sourceAccount = await _context.Accounts.FindAsync(model.AccountSourceId);
-        sourceAccount.Balance -= model.Amount;
-
-        // Sumar el monto al balance de la cuenta destino
-        var destinationAccount = await _context.Accounts.FindAsync(model.AccountDestinationId);
-        destinationAccount.Balance += model.Amount;
+        await UpdateAccountBalancesAndLimits(model.AccountSourceId, model.AccountDestinationId, model.Amount);
 
         // Convertir el modelo a una entidad Movement
         var movementToCreate = model.Adapt<Movement>();
@@ -81,37 +68,6 @@ public class MovementRepository : IMovementRepository
         return movementDTO;
     }
 
-    public async Task<bool> ValidateTransfer(int accountSourceId, int accountDestinationId, decimal amount)
-    {
-        if (!await IsSameAccountType(accountSourceId, accountDestinationId))
-        {
-            throw new ValidationException("Las cuentas no son del mismo tipo.");
-        }
-
-        if (!await IsSameCurrency(accountSourceId, accountDestinationId))
-        {
-            throw new ValidationException("Las cuentas no tienen la misma moneda.");
-        }
-
-        if (!await IsSufficientBalance(accountSourceId, amount))
-        {
-            throw new ValidationException("La cuenta de origen no tiene saldo suficiente.");
-        }
-
-        if (!await IsSourceAccountActive(accountSourceId))
-        {
-            throw new ValidationException("La cuenta de origen no está activa.");
-        }
-
-        if (await ExceedsOperationalLimit(accountSourceId, amount))
-        {
-            throw new ValidationException("La transferencia excede el límite operacional de la cuenta de origen.");
-        }
-
-        return true;
-       
-    }
-
     public async Task<bool> IsSameAccountType(int sourceAccountId, int destinationAccountId)
     {
         var sourceAccountType = await _context.Accounts
@@ -146,30 +102,139 @@ public class MovementRepository : IMovementRepository
     {
         var sourceAccount = await _context.Accounts.FindAsync(sourceAccountId);
 
-        return sourceAccount.Balance >= amount;
+        return sourceAccount?.Balance >= amount;
     }
 
     public async Task<bool> IsSourceAccountActive(int sourceAccountId)
     {
         var sourceAccount = await _context.Accounts.FindAsync(sourceAccountId);
 
-        return sourceAccount.AccountStatus == EAccountStatus.Active;
+        return sourceAccount?.AccountStatus == EAccountStatus.Active;
     }
 
-    public async Task<bool> ExceedsOperationalLimit(int sourceAccountId, decimal amount)
+    public async Task<(bool, string)> ExceedsOperationalLimit(int sourceAccountId, int destinationAccountId, decimal amount)
     {
-        var sourceAccount = await _context.Accounts
-       .Include(a => a.CurrentAccount) // Incluye la relación con la cuenta corriente
-       .FirstOrDefaultAsync(a => a.Id == sourceAccountId);
+        var accounts = await _context.Accounts
+            .Include(a => a.CurrentAccount)
+            .Where(a => a.Id == sourceAccountId || a.Id == destinationAccountId)
+            .ToListAsync();
 
-        if (sourceAccount.AccountType == EAccountType.Current) // Solo las cuentas corrientes tienen límite operacional
+        var sourceAccount = accounts.FirstOrDefault(a => a.Id == sourceAccountId);
+        var destinationAccount = accounts.FirstOrDefault(a => a.Id == destinationAccountId);
+
+        if (sourceAccount?.AccountType == EAccountType.Current && sourceAccount.CurrentAccount != null)
         {
-            // Verifica si la cuenta corriente tiene un límite operacional y si la transferencia excede ese límite
-            return sourceAccount.CurrentAccount != null && amount > sourceAccount.CurrentAccount.OperationalLimit;
+            if (amount > sourceAccount.CurrentAccount.OperationalLimit)
+            {
+                return (true, "source");
+            }
         }
 
-        // Las cuentas de ahorro no tienen límite operacional
+        if (destinationAccount?.AccountType == EAccountType.Current && destinationAccount.CurrentAccount != null)
+        {
+            if (amount > destinationAccount.CurrentAccount.OperationalLimit)
+            {
+                return (true, "destination");
+            }
+        }
+
+        //return (false, null);
+        return (false, "not-exceeded");
+    }
+
+
+    public async Task<bool> IsSameBank(int sourceAccountId, int destinationAccountId)
+    {
+        var accounts = await _context.Accounts
+            .Where(a => a.Id == sourceAccountId || a.Id == destinationAccountId)
+            .Include(a => a.Customer)
+                .ThenInclude(c => c.Bank)
+            .ToListAsync();
+
+        var sourceAccount = accounts.FirstOrDefault(a => a.Id == sourceAccountId);
+        var destinationAccount = accounts.FirstOrDefault(a => a.Id == destinationAccountId);
+
+        if (sourceAccount?.Customer?.Bank == null || destinationAccount?.Customer?.Bank == null)
+        {
+            return false;
+        }
+
+        return sourceAccount.Customer.Bank.Id == destinationAccount.Customer.Bank.Id;
+    }
+
+    public async Task UpdateAccountBalancesAndLimits(int sourceAccountId, int destinationAccountId, decimal amount)
+    {
+        var sourceAccount = await _context.Accounts
+            .Include(a => a.CurrentAccount)
+            .FirstOrDefaultAsync(a => a.Id == sourceAccountId);
+        var destinationAccount = await _context.Accounts
+            .Include(a => a.CurrentAccount)
+            .FirstOrDefaultAsync(a => a.Id == destinationAccountId);
+
+        sourceAccount.Balance -= amount;
+        destinationAccount.Balance += amount;
+
+        if (sourceAccount?.AccountType == EAccountType.Current && sourceAccount.CurrentAccount != null)
+        {
+            sourceAccount.CurrentAccount.OperationalLimit -= amount;
+        }
+
+        if (destinationAccount?.AccountType == EAccountType.Current && destinationAccount.CurrentAccount != null)
+        {
+            destinationAccount.CurrentAccount.OperationalLimit -= amount;
+        }
+
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task UpdateAccountBalanceForWithdrawal(int sourceAccountId, decimal amount)
+    {
+        var sourceAccount = await _context.Accounts.FindAsync(sourceAccountId);
+
+        if (sourceAccount == null)
+        {
+            throw new NotFoundException("Source account not found.");
+        }
+
+        // Verificar si la cuenta tiene fondos suficientes para la extracción
+        if (sourceAccount.Balance < amount)
+        {
+            throw new ValidationException("Insufficient funds for withdrawal.");
+        }
+
+        // Decrementar el saldo de la cuenta
+        sourceAccount.Balance -= amount;
+
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<bool> ExceedsOperationalLimitForCurrentAccount(int destinationAccountId, decimal amount)
+    {
+        var destinationAccount = await _context.Accounts
+            .Include(a => a.CurrentAccount)
+            .FirstOrDefaultAsync(a => a.Id == destinationAccountId);
+
+        if (destinationAccount.AccountType == EAccountType.Current && destinationAccount.CurrentAccount != null)
+        {
+            return amount > destinationAccount.CurrentAccount.OperationalLimit;
+        }
+
+        // Si la cuenta no es de tipo corriente, no se aplica esta validación
         return false;
     }
+
+    public async Task ProcessWithdrawal(CreateMovementModel model)
+    {
+        // Verificar si se excede el límite operacional para cuentas corrientes
+        if (await ExceedsOperationalLimitForCurrentAccount(model.AccountSourceId, model.Amount))
+        {
+            throw new ValidationException("Withdrawal exceeds the operational limit for the source account.");
+        }
+
+        // Decrementar el saldo de la cuenta de origen
+        await UpdateAccountBalanceForWithdrawal(model.AccountSourceId, model.Amount);
+    }
+
+
 
 }

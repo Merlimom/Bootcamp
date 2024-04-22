@@ -24,6 +24,15 @@ public class UpdateCreditCardValidation : AbstractValidator<UpdateCreditCardMode
             .NotNull().WithMessage("Card Number cannot be null")
             .NotEmpty().WithMessage("Card Number cannot be empty");
 
+        RuleFor(x => x.Cvv)
+          .NotNull().WithMessage("Card Number cannot be null")
+          .NotEmpty().WithMessage("Card Number cannot be empty")
+          .Must(IsValidCvvNumber).WithMessage("Card number must have 3 numeric digits");
+
+        RuleFor(x => x.CreditCardStatus)
+            .Must(x => Enum.IsDefined(typeof(ECreditCardStatus), x))
+            .WithMessage("Invalid CreditCard Status");
+
         RuleFor(x => x.CreditLimit)
           .NotNull().WithMessage("Credit Limit cannot be null")
           .GreaterThan(0).WithMessage("Credit Limit must be greater than zero.");
@@ -41,13 +50,15 @@ public class UpdateCreditCardValidation : AbstractValidator<UpdateCreditCardMode
           .NotEmpty().WithMessage("Customer Id cannot be empty");
     }
 
-    private bool BeValidCreditCardStatus(int arg)
-    {
-        return Enum.IsDefined(typeof(ECreditCardStatus), arg);
-    }
 
     private bool IsValidCreditCardNumber(string creditCardNumber)
     {
         return creditCardNumber.Length == 16;
     }
+
+    private bool IsValidCvvNumber(int cvvNumber)
+    {
+        return cvvNumber.ToString().Length == 3;
+    }
+
 }

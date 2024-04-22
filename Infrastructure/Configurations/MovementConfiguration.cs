@@ -15,7 +15,7 @@ public class MovementConfiguration : IEntityTypeConfiguration<Movement>
 
         entity
             .Property(e => e.Description)
-            .HasMaxLength(100);
+            .HasMaxLength(300);
 
         entity
             .Property(e => e.Amount)

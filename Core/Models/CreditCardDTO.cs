@@ -19,8 +19,8 @@ public class CreditCardDTO
     public decimal CurrentDebt { get; set; }
     public decimal InterestRate { get; set; }
 
-    public  CurrencyDTO Currency { get; set; } = null!;
-    public  CustomerDTO Customer { get; set; } = null!;
+    public string Currency { get; set; } = null!;
+    public string Customer { get; set; } = null!;
 
     public string MaskedCardNumber
     {

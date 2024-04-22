@@ -276,6 +276,32 @@ namespace Infrastructure.Migrations
                     b.ToTable("Customers");
                 });
 
+            modelBuilder.Entity("Core.Entities.Deposit", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(20, 5)
+                        .HasColumnType("numeric(20,5)");
+
+                    b.Property<DateTime>("DepositDateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id")
+                        .HasName("Deposit_pkey");
+
+                    b.HasIndex("AccountId");
+
+                    b.ToTable("Deposits");
+                });
+
             modelBuilder.Entity("Core.Entities.Enterprise", b =>
                 {
                     b.Property<int>("Id")
@@ -325,8 +351,8 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
 
                     b.Property<int>("MovementType")
                         .HasColumnType("integer");
@@ -343,6 +369,43 @@ namespace Infrastructure.Migrations
                     b.HasIndex("AccountSourceId");
 
                     b.ToTable("Movements");
+                });
+
+            modelBuilder.Entity("Core.Entities.Payment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(20, 5)
+                        .HasColumnType("numeric(20,5)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<string>("DocumentNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id")
+                        .HasName("Payment_pkey");
+
+                    b.HasIndex("AccountId");
+
+                    b.HasIndex("ServiceId");
+
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("Core.Entities.Product", b =>
@@ -431,6 +494,25 @@ namespace Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("SavingAccounts");
+                });
+
+            modelBuilder.Entity("Core.Entities.Service", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id")
+                        .HasName("Service_pkey");
+
+                    b.ToTable("Services");
                 });
 
             modelBuilder.Entity("Core.Entities.UserRequest", b =>
@@ -536,6 +618,17 @@ namespace Infrastructure.Migrations
                     b.Navigation("Bank");
                 });
 
+            modelBuilder.Entity("Core.Entities.Deposit", b =>
+                {
+                    b.HasOne("Core.Entities.Account", "Account")
+                        .WithMany("Deposits")
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+                });
+
             modelBuilder.Entity("Core.Entities.Movement", b =>
                 {
                     b.HasOne("Core.Entities.Account", "Account")
@@ -545,6 +638,25 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Account");
+                });
+
+            modelBuilder.Entity("Core.Entities.Payment", b =>
+                {
+                    b.HasOne("Core.Entities.Account", "Account")
+                        .WithMany("Payments")
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.Entities.Service", "Service")
+                        .WithMany("Payments")
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+
+                    b.Navigation("Service");
                 });
 
             modelBuilder.Entity("Core.Entities.PromotionEnterprise", b =>
@@ -608,7 +720,11 @@ namespace Infrastructure.Migrations
                 {
                     b.Navigation("CurrentAccount");
 
+                    b.Navigation("Deposits");
+
                     b.Navigation("Movements");
+
+                    b.Navigation("Payments");
 
                     b.Navigation("SavingAccount");
                 });
@@ -649,6 +765,11 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Core.Entities.Promotion", b =>
                 {
                     b.Navigation("PromotionsEnterprises");
+                });
+
+            modelBuilder.Entity("Core.Entities.Service", b =>
+                {
+                    b.Navigation("Payments");
                 });
 #pragma warning restore 612, 618
         }

@@ -7,5 +7,6 @@ public interface IUserRequestRepository
 {
     Task<List<UserRequestDTO>> GetAll();
     Task<UserRequestDTO> Add(CreateUserRequestModel model);
+    Task<bool> VerifyProductExists(int productId);
     Task<(bool customerExists, bool currencyExists)> VerifyCustomerAndCurrencyExist(int customerId, int currencyId);
 }

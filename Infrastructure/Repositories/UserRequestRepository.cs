@@ -65,4 +65,11 @@ public class UserRequestRepository : IUserRequestRepository
 
         return (customerExists, currencyExists);
     }
+
+    public async Task<bool> VerifyProductExists(int productId)
+    {
+        var productExists = await _context.Products.AnyAsync(c => c.Id == productId);
+        return (productExists);
+
+    }
 }
