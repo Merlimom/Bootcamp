@@ -1,5 +1,6 @@
 ﻿
 using Core.Constants;
+using Core.Exceptions;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Core.Models;
@@ -25,18 +26,8 @@ public class MovementService : IMovementService
                                                                  model.DestinationAccountNumber, model.CurrencyId);
         if (!isValid)
         {
-            throw new ValidationException("Movement validation failed.");
+            throw new BusinessLogicException("Movement validation failed.");
         }
-
-        //if (model.MovementType == EMovementType.Deposit)
-        //{
-        //    await _movementRepository.ProcessDeposit(model);
-        //}
-
-        //if (model.MovementType == EMovementType.Withdrawal)
-        //{
-        //    await _movementRepository.ProcessWithdrawal(model);
-        //}
 
         return await _movementRepository.Add(model);
     }

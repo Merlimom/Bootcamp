@@ -24,7 +24,13 @@ public class AccountMappingConfiguration : IRegister
         config.NewConfig<CreateCurrentAccountModel, CurrentAccount>()
             .Map(dest => dest.OperationalLimit, src => src.OperationalLimit)
             .Map(dest => dest.MonthAverage, src => src.MonthAverage)
-            .Map(dest => dest.Interest, src => src.Interest);
+            .Map(dest => dest.Interest, src => src.Interest)
+            .AfterMapping((src, dest) =>
+             {
+                 // Establecer InitialOperationalLimit igual a OperationalLimit
+                 dest.InitialOperationalLimit = dest.OperationalLimit;
+             });
+
 
         //Entidad hacia el DTO
         config.NewConfig<Account, AccountDTO>()

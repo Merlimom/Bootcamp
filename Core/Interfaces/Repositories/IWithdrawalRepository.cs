@@ -3,9 +3,9 @@ using Core.Request;
 
 namespace Core.Interfaces.Repositories;
 
-public interface IDepositRepository
+public interface IWithdrawalRepository
 {
-    Task<List<DepositDTO>> GetAll();
-    Task<DepositDTO> Add(CreateDepositModel model);
+    Task<List<WithdrawalDTO>> GetAll();
+    Task<WithdrawalDTO> Add(CreateWithdrawalModel model);
     Task<bool> ExceedsOperationalLimitForCurrentAccount(int accountId, decimal amount);
 }

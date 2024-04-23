@@ -21,20 +21,18 @@ public class DepositRepository : IDepositRepository
 
     public async Task<DepositDTO> Add(CreateDepositModel model)
     {
-        await ProcessDeposit(model);
-
         var depositToCreate = model.Adapt<Deposit>();
+
+        await UpdateAccountBalanceForDeposit(model.AccountId, model.Amount);
 
         _context.Deposits.Add(depositToCreate);
 
         var result = await _context.SaveChangesAsync();
-
         var query = await _context.Deposits
             .Include(a => a.Account)
                 .ThenInclude(a => a.Customer)
                     .ThenInclude(a => a.Bank)
             .SingleOrDefaultAsync(r => r.Id == depositToCreate.Id);
-
         var depositDTO = query.Adapt<DepositDTO>();
         return depositDTO;
     }
@@ -42,50 +40,38 @@ public class DepositRepository : IDepositRepository
     public async Task<List<DepositDTO>> GetAll()
     {
         var query = _context.Deposits
-                .Include(a => a.Account)
-                .ThenInclude(a => a.Customer)
-                .ThenInclude(a => a.Bank)
-                .AsQueryable();
-
+               .Include(a => a.Account)
+               .ThenInclude(a => a.Customer)
+               .ThenInclude(a => a.Bank)
+               .AsQueryable();
         var deposits = await _context.Deposits.ToListAsync();
-
         var depositDTO = deposits.Adapt<List<DepositDTO>>();
-
         return depositDTO;
     }
 
 
-    public async Task UpdateAccountBalanceForDeposit(int destinationAccountId, decimal amount)
+    public async Task UpdateAccountBalanceForDeposit(int accountId, decimal amount)
     {
-        var destinationAccount = await _context.Accounts.FindAsync(destinationAccountId);
-        destinationAccount.Balance += amount;
-        await _context.SaveChangesAsync();
+        var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Id == accountId);
+        if (account != null)
+        {
+            account.Balance += amount;
+            await _context.SaveChangesAsync();
+        }
     }
 
-    public async Task<bool> ExceedsOperationalLimitForCurrentAccount(int destinationAccountId, decimal amount)
+    public async Task<bool> ExceedsOperationalLimitForCurrentAccount(int accountId, decimal amount)
     {
-        var destinationAccount = await _context.Accounts
+        var account = await _context.Accounts
             .Include(a => a.CurrentAccount)
-            .FirstOrDefaultAsync(a => a.Id == destinationAccountId);
+            .FirstOrDefaultAsync(a => a.Id == accountId);
 
-        if (destinationAccount.AccountType == EAccountType.Current && destinationAccount.CurrentAccount != null)
+        if (account.AccountType == EAccountType.Current && account.CurrentAccount != null)
         {
-            return amount > destinationAccount.CurrentAccount.OperationalLimit;
+            return amount > account.CurrentAccount.OperationalLimit;
         }
 
         // Si la cuenta no es de tipo corriente, no se aplica esta validación
         return false;
-    }
-
-    public async Task ProcessDeposit(CreateDepositModel model)
-    {
-        // Incrementar el saldo de la cuenta de destino
-        await UpdateAccountBalanceForDeposit(model.AccountId, model.Amount);
-
-        // Verificar si se excede el límite operacional para cuentas corrientes
-        if (await ExceedsOperationalLimitForCurrentAccount(model.AccountId, model.Amount))
-        {
-            throw new ValidationException("Deposit exceeds the operational limit for the destination account.");
-        }
     }
 }

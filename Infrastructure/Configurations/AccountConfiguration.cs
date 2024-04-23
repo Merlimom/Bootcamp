@@ -21,7 +21,6 @@ public class AccountConfiguration : IEntityTypeConfiguration<Account>
             .Property(e => e.Balance)
             .HasPrecision(20, 5);
 
-       
 
         entity
             .HasOne(account => account.Currency)
@@ -53,6 +52,11 @@ public class AccountConfiguration : IEntityTypeConfiguration<Account>
           .HasMany(account => account.Deposits)
           .WithOne(deposit => deposit.Account)
           .HasForeignKey(deposit => deposit.AccountId);
+
+        entity
+          .HasMany(account => account.Withdrawals)
+          .WithOne(withdrawal => withdrawal.Account)
+          .HasForeignKey(withdrawal => withdrawal.AccountId);
 
         entity
             .HasOne(account => account.SavingAccount)

@@ -1,8 +1,6 @@
-﻿using Core.Entities;
+﻿namespace Core.Models;
 
-namespace Core.Models;
-
-public class DepositDTO
+public class WithdrawalDTO
 {
     public int Id { get; set; }
 
@@ -11,5 +9,4 @@ public class DepositDTO
     public DateTime DepositDateTime { get; set; }
 
     public AccountDTO Account { get; set; } = null!;
-
 }

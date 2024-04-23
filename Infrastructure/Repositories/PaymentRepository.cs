@@ -52,7 +52,7 @@ public class PaymentRepository : IPaymentRepository
              .Include(a => a.Service)
              .AsQueryable();
 
-        var result = await query.ToListAsync();
+        //var result = await query.ToListAsync();
 
         var payments = await _context.Payments.ToListAsync();
 

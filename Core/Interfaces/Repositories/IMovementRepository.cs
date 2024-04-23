@@ -16,7 +16,8 @@ public interface IMovementRepository
     Task<(bool, string)> ExceedsOperationalLimit(int sourceAccountId, int destinationAccountId, decimal amount);
     Task<bool> IsSameBank(int sourceAccountId, int destinationAccountId);
     Task UpdateAccountBalancesAndLimits(int sourceAccountId, int destinationAccountId, decimal amount);
-    Task<bool> ExceedsOperationalLimitForCurrentAccount(int destinationAccountId, decimal amount);
+    Task<bool> UpdateOperationalLimitByMonth();
+    //Task<bool> ExceedsOperationalLimitForCurrentAccount(int destinationAccountId, decimal amount);
     //Task ProcessDeposit(CreateMovementModel model);
     //Task ProcessWithdrawal(CreateMovementModel model);
 

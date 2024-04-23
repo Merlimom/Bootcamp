@@ -59,7 +59,7 @@ public class AccountRepository : IAccountRepository
             .Include(a => a.CurrentAccount)
             .FirstOrDefaultAsync(x => x.Id == id);
 
-        if (account is null) throw new NotFoundException($"The account with id: {id} doest not exist");
+        if (account is null) throw new BusinessLogicException($"The account with id: {id} doest not exist");
 
         return account.Adapt<AccountDTO>();
 
@@ -69,7 +69,7 @@ public class AccountRepository : IAccountRepository
     {
         var account = await _context.Accounts.FindAsync(id);
 
-        if (account is null) throw new NotFoundException("Account with ID " + id + " was not found");
+        if (account is null) throw new BusinessLogicException("Account with ID " + id + " was not found");
 
         account.IsDeleted = EIsDeletedStatus.True;
 
@@ -139,7 +139,7 @@ public class AccountRepository : IAccountRepository
 
         var account = await _context.Accounts.FindAsync(model.Id);
 
-        if (account is null) throw new Exception("Account was not found");
+        if (account is null) throw new BusinessLogicException("Account was not found");
 
         model.Adapt(account);
 

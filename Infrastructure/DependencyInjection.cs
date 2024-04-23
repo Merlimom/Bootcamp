@@ -54,6 +54,8 @@ public static class DependencyInjection
         services.AddScoped<IMovementRepository, MovementRepository>();
         services.AddScoped<IPaymentRepository, PaymentRepository>();
         services.AddScoped<IDepositRepository, DepositRepository>();
+        services.AddScoped<IWithdrawalRepository, WithdrawalRepository>();
+
 
 
 
@@ -75,6 +77,8 @@ public static class DependencyInjection
         services.AddScoped<ITransferValidationService, TransferValidationService>();
         services.AddScoped<IPaymentService, PaymentService>();
         services.AddScoped<IDepositService, DepositService>();
+        services.AddScoped<IWithdrawalService, WithdrawalService>();
+
 
 
 

@@ -49,6 +49,8 @@ public partial class BootcampContext : DbContext
 
     public virtual DbSet<Deposit> Deposits { get; set; }
 
+    public virtual DbSet<Withdrawal> Withdrawals { get; set; }
+
 
 
 
@@ -70,6 +72,8 @@ public partial class BootcampContext : DbContext
         modelBuilder.ApplyConfiguration(new ServiceConfiguration());
         modelBuilder.ApplyConfiguration(new PaymentConfiguration());
         modelBuilder.ApplyConfiguration(new DepositConfiguration());
+        modelBuilder.ApplyConfiguration(new WithdrawalConfiguration());
+
 
 
 

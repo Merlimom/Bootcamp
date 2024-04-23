@@ -1,4 +1,5 @@
 ﻿
+using Core.Exceptions;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Core.Request;
@@ -20,22 +21,22 @@ public class TransferValidationService : ITransferValidationService
     {
         if (!await _movementRepository.IsSameAccountType(accountSourceId, accountDestinationId))
         {
-            throw new ValidationException("The accounts are not the same type.");
+            throw new BusinessLogicException("The accounts are not the same type.");
         }
 
         if (!await _movementRepository.IsSameCurrency(accountSourceId, accountDestinationId))
         {
-            throw new ValidationException("The accounts do not have the same currency.");
+            throw new BusinessLogicException("The accounts do not have the same currency.");
         }
 
         if (!await _movementRepository.IsSufficientBalance(accountSourceId, amount))
         {
-            throw new ValidationException("The source account does not have sufficient balance.");
+            throw new BusinessLogicException("The source account does not have sufficient balance.");
         }
 
         if (!await _movementRepository.IsSourceAccountActive(accountSourceId))
         {
-            throw new ValidationException("Source account is not active.");
+            throw new BusinessLogicException("Source account is not active.");
         }
 
         var (exceedsLimit, accountType) = await _movementRepository.ExceedsOperationalLimit(accountSourceId, accountDestinationId, amount);
@@ -43,7 +44,7 @@ public class TransferValidationService : ITransferValidationService
         if (exceedsLimit)
         {
             var accountName = accountType == "source" ? "source account" : "destination account";
-            throw new ValidationException($"The transfer exceeds the operational limit of the {accountName}.");
+            throw new BusinessLogicException($"The transfer exceeds the operational limit of the {accountName}.");
         }
 
         if (!await _movementRepository.IsSameBank(accountSourceId, accountDestinationId))
@@ -53,7 +54,7 @@ public class TransferValidationService : ITransferValidationService
                 string.IsNullOrEmpty(destinationAccountNumber) || destinationAccountNumber == "string" ||
                 string.IsNullOrEmpty(destinationDocumentNumber) || destinationDocumentNumber == "string")
             {
-                throw new ValidationException("When transferring between different banks, 'Destination Bank Id' and 'Currency Id' must be greater than 0, " +
+                throw new BusinessLogicException("When transferring between different banks, 'Destination Bank Id' and 'Currency Id' must be greater than 0, " +
                                               "'Destination Account Number' and 'Destination Document Number' must be valid values.");
             }
         }
