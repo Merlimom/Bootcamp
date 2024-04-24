@@ -1,5 +1,4 @@
-﻿
-using Core.Constants;
+﻿using Core.Constants;
 using Core.Entities;
 using Core.Exceptions;
 using Core.Interfaces.Repositories;
@@ -25,8 +24,6 @@ public class MovementRepository : IMovementRepository
     public async Task<MovementDTO> Add(CreateMovementModel model)
     {
         await UpdateAccountBalancesAndLimits(model.AccountSourceId, model.AccountDestinationId, model.Amount);
-        //await _movementRepository.UpdateOperationalLimitByMonth(accountSourceId);
-        //await _movementRepository.UpdateOperationalLimitByMonth(accountDestinationId);
 
         // Convertir el modelo a una entidad Movement
         var movementToCreate = model.Adapt<Movement>();
@@ -116,19 +113,21 @@ public class MovementRepository : IMovementRepository
         return sourceAccount?.AccountStatus == EAccountStatus.Active;
     }
 
-    public async Task<(bool, string)> ExceedsOperationalLimit(int sourceAccountId, int destinationAccountId, decimal amount)
+    public async Task<(bool, string)> ExceedsOperationalLimit(int sourceAccountId, int destinationAccountId, decimal amount, DateTime TransferredDateTime)
     {
         var accounts = await _context.Accounts
-            .Include(a => a.CurrentAccount)
-            .Where(a => a.Id == sourceAccountId || a.Id == destinationAccountId)
-            .ToListAsync();
+         .Include(a => a.CurrentAccount)
+         .Where(a => a.Id == sourceAccountId || a.Id == destinationAccountId)
+         .ToListAsync();
 
         var sourceAccount = accounts.FirstOrDefault(a => a.Id == sourceAccountId);
         var destinationAccount = accounts.FirstOrDefault(a => a.Id == destinationAccountId);
 
         if (sourceAccount?.AccountType == EAccountType.Current && sourceAccount.CurrentAccount != null)
         {
-            if (amount > sourceAccount.CurrentAccount.OperationalLimit)
+            decimal totalSourceMovementsAmount = await CalculateTotalMovementsAmount(sourceAccountId, TransferredDateTime);
+
+            if (amount + totalSourceMovementsAmount > sourceAccount.CurrentAccount.OperationalLimit)
             {
                 return (true, "source");
             }
@@ -136,15 +135,42 @@ public class MovementRepository : IMovementRepository
 
         if (destinationAccount?.AccountType == EAccountType.Current && destinationAccount.CurrentAccount != null)
         {
-            if (amount > destinationAccount.CurrentAccount.OperationalLimit)
+            decimal totalDestinationMovementsAmount = await CalculateTotalMovementsAmount(destinationAccountId, TransferredDateTime);
+
+            if (amount + totalDestinationMovementsAmount > destinationAccount.CurrentAccount.OperationalLimit)
             {
                 return (true, "destination");
             }
         }
 
-        //return (false, null);
         return (false, "not-exceeded");
     }
+
+    private async Task<decimal> CalculateTotalMovementsAmount(int accountId, DateTime transactionDate)
+    {
+        var account = await _context.Accounts
+            .Include(a => a.CurrentAccount)
+            .FirstOrDefaultAsync(a => a.Id == accountId);
+
+        if (account == null || account.AccountType != EAccountType.Current || account.CurrentAccount == null)
+        {
+            // Si la cuenta no es de tipo Current o no tiene un CurrentAccount asociado, retornar 0
+            return 0;
+        }
+
+        decimal totalMovementsAmount = await _context.Movements
+            .Where(m => (m.AccountSourceId == accountId || m.AccountDestinationId == accountId) &&
+                        m.TransferredDateTime.Month == transactionDate.Month)
+            .SumAsync(m => m.Amount);
+
+        decimal totalDepositsAmount = await _context.Deposits
+            .Where(d => d.AccountId == accountId && d.DepositDateTime.Month == transactionDate.Month)
+            .SumAsync(d => d.Amount);
+
+        return totalMovementsAmount + totalDepositsAmount;
+    }
+
+
 
 
     public async Task<bool> IsSameBank(int sourceAccountId, int destinationAccountId)
@@ -175,188 +201,12 @@ public class MovementRepository : IMovementRepository
             .Include(a => a.CurrentAccount)
             .FirstOrDefaultAsync(a => a.Id == destinationAccountId);
 
-        sourceAccount.Balance -= amount;
-        destinationAccount.Balance += amount;
-
-        if (sourceAccount?.AccountType == EAccountType.Current && sourceAccount.CurrentAccount != null)
-        {
-            sourceAccount.CurrentAccount.OperationalLimit -= amount;
-        }
-
-        if (destinationAccount?.AccountType == EAccountType.Current && destinationAccount.CurrentAccount != null)
-        {
-            destinationAccount.CurrentAccount.OperationalLimit -= amount;
-        }
+        sourceAccount!.Balance -= amount;
+        destinationAccount!.Balance += amount;
 
         await _context.SaveChangesAsync();
-
-
-        //var currentDate = DateTime.UtcNow;
-
-        //var sourceAccount = await _context.Accounts
-        //    .Include(a => a.Movements)
-        //    .Include(a => a.CurrentAccount)
-        //    .FirstOrDefaultAsync(a => a.Id == sourceAccountId);
-
-        //var destinationAccount = await _context.Accounts
-        //    .Include(a => a.Movements)
-        //    .Include(a => a.CurrentAccount)
-        //    .FirstOrDefaultAsync(a => a.Id == destinationAccountId);
-
-        //sourceAccount.Balance -= amount;
-        //destinationAccount.Balance += amount;
-
-        //// Verifica si la cuenta tiene una cuenta corriente asociada antes de acceder a CurrentAccount
-        //if (sourceAccount.CurrentAccount != null && destinationAccount.CurrentAccount != null)
-        //{
-        //    // Verifica si la fecha de la última transferencia es anterior al mes actual para sourceAccount
-        //    var lastSourceTransferDate = sourceAccount.CurrentAccount?.Account.Movements
-        //           .Where(m => m.AccountSourceId == sourceAccountId) // Filtrar por la cuenta de origen
-        //           .OrderByDescending(m => m.TransferredDateTime)
-        //           .FirstOrDefault()?.TransferredDateTime;
-
-
-        //    // Verifica si la fecha de la última transferencia es anterior al mes actual para destinationAccount
-        //    var lastDestinationTransferDate = destinationAccount.CurrentAccount?.Account.Movements
-        //           .Where(m => m.AccountDestinationId == destinationAccountId) // Filtrar por la cuenta de destino
-        //           .OrderByDescending(m => m.TransferredDateTime)
-        //           .FirstOrDefault()?.TransferredDateTime;
-
-        //    // Si la fecha de la última transferencia es diferente al mes actual, restablece el límite operacional
-        //    if (lastSourceTransferDate?.Month != currentDate.Month)
-        //    {
-        //        sourceAccount.CurrentAccount.OperationalLimit = sourceAccount.CurrentAccount.InitialOperationalLimit;
-        //    }
-
-        //    if (lastDestinationTransferDate?.Month != currentDate.Month)
-        //    {
-        //        destinationAccount.CurrentAccount.OperationalLimit = destinationAccount.CurrentAccount.InitialOperationalLimit;
-        //    }
-
-        //    // Verifica si hay suficiente saldo y límite operativo disponible para realizar la operación
-        //    if (sourceAccount.Balance >= amount && sourceAccount.CurrentAccount.OperationalLimit >= amount)
-        //    {
-        //        // Restringe la disminución del límite operacional si es menor que la cantidad en la transferencia
-        //        sourceAccount.CurrentAccount.OperationalLimit = Math.Max(sourceAccount.CurrentAccount.OperationalLimit - amount, 0);
-        //        destinationAccount.CurrentAccount.OperationalLimit = Math.Max(destinationAccount.CurrentAccount.OperationalLimit - amount, 0);
-
-        //        await _context.SaveChangesAsync();
-        //    }
-
-
-        //var currentDate = DateTime.UtcNow;
-
-        //var sourceAccount = await _context.Accounts
-        //    .Include(a => a.Movements)
-        //    .Include(a => a.CurrentAccount)
-        //    .FirstOrDefaultAsync(a => a.Id == sourceAccountId);
-
-        //var destinationAccount = await _context.Accounts
-        //    .Include(a => a.Movements)
-        //    .Include(a => a.CurrentAccount)
-        //    .FirstOrDefaultAsync(a => a.Id == destinationAccountId);
-
-        //sourceAccount.Balance -= amount;
-        //destinationAccount.Balance += amount;
-
-
-
-        //// Verifica si la cuenta tiene una cuenta corriente asociada antes de acceder a CurrentAccount
-        //if (sourceAccount.CurrentAccount != null && destinationAccount.CurrentAccount != null)
-        //{
-        //    // Verifica si la fecha de la última transferencia es anterior al mes actual para sourceAccount
-        //    var lastSourceTransferDate = sourceAccount.CurrentAccount?.Account.Movements
-        //        .Where(m => m.AccountSourceId == sourceAccountId) // Filtrar por la cuenta de origen
-        //        .OrderByDescending(m => m.TransferredDateTime)
-        //        .FirstOrDefault()?.TransferredDateTime;
-
-        //    // Verifica si la fecha de la última transferencia es anterior al mes actual para destinationAccount
-        //    var lastDestinationTransferDate = destinationAccount.CurrentAccount?.Account.Movements
-        //        .Where(m => m.AccountDestinationId == destinationAccountId) // Filtrar por la cuenta de destino
-        //        .OrderByDescending(m => m.TransferredDateTime)
-        //        .FirstOrDefault()?.TransferredDateTime;
-
-        //    // Si la fecha de la última transferencia es diferente al mes actual, restablece el límite operacional
-        //    if (lastSourceTransferDate?.Month != currentDate.Month)
-        //    {
-        //        sourceAccount.CurrentAccount.OperationalLimit = sourceAccount.CurrentAccount.InitialOperationalLimit;
-        //    }
-
-        //    if (lastDestinationTransferDate?.Month != currentDate.Month)
-        //    {
-        //        destinationAccount.CurrentAccount.OperationalLimit = destinationAccount.CurrentAccount.InitialOperationalLimit;
-        //    }
-
-        //    // Verifica si hay suficiente saldo y límite operativo disponible para realizar la operación
-        //    if (sourceAccount.Balance >= amount && sourceAccount.CurrentAccount.OperationalLimit >= amount)
-        //    {
-        //        // Restringe la disminución del límite operacional si es menor que la cantidad en la transferencia
-        //        sourceAccount.CurrentAccount.OperationalLimit = Math.Max(sourceAccount.CurrentAccount.OperationalLimit - amount, 0);
-        //        destinationAccount.CurrentAccount.OperationalLimit = Math.Max(destinationAccount.CurrentAccount.OperationalLimit - amount, 0);
-
-        //        await _context.SaveChangesAsync();
-    }
-    public async Task<bool> UpdateOperationalLimitByMonth()
-    {
-        try
-        {
-            var currentDate = DateTime.UtcNow;
-
-            // Obtener todas las cuentas actuales (de tipo "current") con movimientos
-            var accounts = await _context.Accounts
-                .Include(a => a.CurrentAccount)
-                .Include(a => a.Movements)
-                .Where(a => a.AccountType == EAccountType.Current && a.Movements.Any())
-                .ToListAsync();
-
-            foreach (var account in accounts)
-            {
-                // Verificar si hay movimientos registrados en el mes actual
-                var lastTransferDate = account.Movements
-                    .Where(m => m.TransferredDateTime.Value.Month == currentDate.Month)
-                    .OrderByDescending(m => m.TransferredDateTime)
-                    .FirstOrDefault()?.TransferredDateTime;
-
-                // Si no hay movimientos para el mes actual, restablecer el límite operacional
-                if (lastTransferDate == null)
-                {
-                    account.CurrentAccount.OperationalLimit = account.CurrentAccount.InitialOperationalLimit;
-                }
-            }
-
-            // Guardar los cambios en la base de datos
-            await _context.SaveChangesAsync();
-
-            return true;
-        }
-        catch (Exception ex)
-        {
-            // Manejar cualquier excepción que pueda ocurrir
-            // Aquí puedes registrar el error, lanzar una excepción o manejarlo de otra manera según tu necesidad
-            Console.WriteLine($"Error al actualizar el límite operacional por mes: {ex.Message}");
-            return false;
-        }
     }
 
 }
-
-
-
-
-
-
-//public async Task<bool> ExceedsOperationalLimitForCurrentAccount(int destinationAccountId, decimal amount)
-//{
-//    var destinationAccount = await _context.Accounts
-//        .Include(a => a.CurrentAccount)
-//        .FirstOrDefaultAsync(a => a.Id == destinationAccountId);
-
-//    if (destinationAccount.AccountType == EAccountType.Current && destinationAccount.CurrentAccount != null)
-//    {
-//        return amount > destinationAccount.CurrentAccount.OperationalLimit;
-//    }
-
-//    // Si la cuenta no es de tipo corriente, no se aplica esta validación
-//    return false;
 
 

@@ -7,5 +7,4 @@ public interface IWithdrawalRepository
 {
     Task<List<WithdrawalDTO>> GetAll();
     Task<WithdrawalDTO> Add(CreateWithdrawalModel model);
-    Task<bool> ExceedsOperationalLimitForCurrentAccount(int accountId, decimal amount);
 }

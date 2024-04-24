@@ -10,11 +10,4 @@ public class CurrentAccount
     public int AccountId { get; set; }
     public Account Account { get; set; } = null!;
 
-    public decimal InitialOperationalLimit { get; set; }
-
-    //public CurrentAccount()
-    //{
-    //    // Establecer InitialOperationalLimit igual a OperationalLimit
-    //    InitialOperationalLimit = OperationalLimit;
-    //}
 }

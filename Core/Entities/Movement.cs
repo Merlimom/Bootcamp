@@ -12,7 +12,7 @@ public class Movement
 
     public decimal Amount { get; set; }
 
-    public DateTime? TransferredDateTime { get; set; }
+    public DateTime TransferredDateTime { get; set; }
 
     public ETransferStatus TransferStatus { get; set; } = ETransferStatus.Pending;
 

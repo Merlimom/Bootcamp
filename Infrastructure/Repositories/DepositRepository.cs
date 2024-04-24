@@ -60,18 +60,46 @@ public class DepositRepository : IDepositRepository
         }
     }
 
-    public async Task<bool> ExceedsOperationalLimitForCurrentAccount(int accountId, decimal amount)
+
+    public async Task<bool> ExceedsOperationalLimitForCurrentAccount(int accountId, decimal amount, DateTime transactionDate)
     {
         var account = await _context.Accounts
             .Include(a => a.CurrentAccount)
             .FirstOrDefaultAsync(a => a.Id == accountId);
 
-        if (account.AccountType == EAccountType.Current && account.CurrentAccount != null)
+        if (account?.AccountType == EAccountType.Current && account.CurrentAccount != null)
         {
-            return amount > account.CurrentAccount.OperationalLimit;
+            decimal totalAmount = await CalculateTotalAmount(accountId, transactionDate);
+
+            return (amount + totalAmount) > account.CurrentAccount.OperationalLimit;
         }
 
         // Si la cuenta no es de tipo corriente, no se aplica esta validación
         return false;
     }
+
+    private async Task<decimal> CalculateTotalAmount(int accountId, DateTime transactionDate)
+    {
+        var account = await _context.Accounts
+            .Include(a => a.CurrentAccount)
+            .FirstOrDefaultAsync(a => a.Id == accountId);
+
+        if (account == null || account.AccountType != EAccountType.Current || account.CurrentAccount == null)
+        {
+            // Si la cuenta no es de tipo Current o no tiene un CurrentAccount asociado, retornar 0
+            return 0;
+        }
+
+        decimal totalDepositsAmount = await _context.Deposits
+            .Where(d => d.AccountId == accountId && d.DepositDateTime.Month == transactionDate.Month)
+            .SumAsync(d => d.Amount);
+
+        decimal totalMovementsAmount = await _context.Movements
+            .Where(m => (m.AccountSourceId == accountId || m.AccountDestinationId == accountId) &&
+                        m.TransferredDateTime.Month == transactionDate.Month)
+            .SumAsync(m => m.Amount);
+
+        return totalDepositsAmount + totalMovementsAmount;
+    } 
+
 }

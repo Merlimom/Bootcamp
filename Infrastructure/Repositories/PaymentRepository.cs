@@ -20,25 +20,43 @@ public class PaymentRepository : IPaymentRepository
 
     public async Task<PaymentDTO> Add(CreatePaymentModel model)
     {
-        var query = _context.Payments
-             .Include(a => a.Account)
-             .ThenInclude(a => a.Customer)
-             .Include(a => a.Account)
-             .Include(a => a.Service)
-             .AsQueryable();
+        //var query = _context.Payments
+        //     .Include(a => a.Account)
+        //     .ThenInclude(a => a.Customer)
+        //     .Include(a => a.Account)
+        //     .Include(a => a.Service)
+        //     .AsQueryable();
 
-        var result = await query.ToListAsync();
+        //var result = await query.ToListAsync();
+
+        //var paymentToCreate = model.Adapt<Payment>();
+
+        //_context.Payments.Add(paymentToCreate);
+        //await _context.SaveChangesAsync();
+
+        //// Actualizar el saldo de la cuenta
+        //await UpdateAccountBalance(paymentToCreate.AccountId, paymentToCreate.Amount);
+
+        //var paymentDTO = paymentToCreate.Adapt<PaymentDTO>();
+
+        //return paymentDTO;
 
         var paymentToCreate = model.Adapt<Payment>();
 
+        await UpdateAccountBalance(model.AccountId, model.Amount);
+
+
         _context.Payments.Add(paymentToCreate);
-        await _context.SaveChangesAsync();
 
-        // Actualizar el saldo de la cuenta
-        await UpdateAccountBalance(paymentToCreate.AccountId, paymentToCreate.Amount);
+        var result = await _context.SaveChangesAsync();
 
-        var paymentDTO = paymentToCreate.Adapt<PaymentDTO>();
+        var query = await _context.Payments
+            .Include(a => a.Service)
+            .Include(a => a.Account)
+                .ThenInclude(a => a.Customer)
+            .SingleOrDefaultAsync(r => r.Id == paymentToCreate.Id);
 
+        var paymentDTO = query.Adapt<PaymentDTO>();
         return paymentDTO;
     }
 
@@ -66,7 +84,7 @@ public class PaymentRepository : IPaymentRepository
         var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Id == accountId);
         if (account != null)
         {
-            account.Balance -= amount; // Resta el monto del pago al saldo de la cuenta
+            account.Balance -= amount; 
             await _context.SaveChangesAsync();
         }
     }
@@ -82,6 +100,6 @@ public class PaymentRepository : IPaymentRepository
     {
         var account = await _context.Accounts.FindAsync(accountId);
 
-        return account.Balance >= amount;
+        return account!.Balance >= amount;
     }
 }

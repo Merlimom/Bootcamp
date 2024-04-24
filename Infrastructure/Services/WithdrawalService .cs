@@ -18,13 +18,7 @@ public class WithdrawalService : IWithdrawalService
 
     public async Task<WithdrawalDTO> Add(CreateWithdrawalModel model)
     {
-        bool exceedsLimit = await _withdrawalRepository.ExceedsOperationalLimitForCurrentAccount(model.AccountId, model.Amount);
-
-        // Si excede el límite operacional, lanzar una excepción
-        if (exceedsLimit)
-        {
-            throw new BusinessLogicException("Deposit exceeds the operational limit for the destination account.");
-        }
+       
         return await _withdrawalRepository.Add(model);
     }
 

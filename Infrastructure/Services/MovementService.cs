@@ -23,7 +23,7 @@ public class MovementService : IMovementService
     {
         bool isValid = await _validationService.ValidateTransfer(model.AccountSourceId, model.AccountDestinationId, model.Amount,
                                                                  model.DestinationBankId, model.DestinationDocumentNumber,
-                                                                 model.DestinationAccountNumber, model.CurrencyId);
+                                                                 model.DestinationAccountNumber, model.CurrencyId, model.TransferredDateTime.HasValue ? model.TransferredDateTime.Value : default);
         if (!isValid)
         {
             throw new BusinessLogicException("Movement validation failed.");

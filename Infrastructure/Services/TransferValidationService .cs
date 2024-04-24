@@ -17,7 +17,7 @@ public class TransferValidationService : ITransferValidationService
     }
 
     public async Task<bool> ValidateTransfer(int accountSourceId, int accountDestinationId, decimal amount,
-                                             int? destinationBankId, string? destinationAccountNumber, string? destinationDocumentNumber, int? currencyId)
+                                             int? destinationBankId, string? destinationAccountNumber, string? destinationDocumentNumber, int? currencyId, DateTime TransferredDateTime)
     {
         if (!await _movementRepository.IsSameAccountType(accountSourceId, accountDestinationId))
         {
@@ -39,13 +39,14 @@ public class TransferValidationService : ITransferValidationService
             throw new BusinessLogicException("Source account is not active.");
         }
 
-        var (exceedsLimit, accountType) = await _movementRepository.ExceedsOperationalLimit(accountSourceId, accountDestinationId, amount);
+        (bool exceedsLimit, string accountType) = await _movementRepository.ExceedsOperationalLimit(accountSourceId, accountDestinationId, amount, TransferredDateTime);
 
         if (exceedsLimit)
         {
             var accountName = accountType == "source" ? "source account" : "destination account";
             throw new BusinessLogicException($"The transfer exceeds the operational limit of the {accountName}.");
         }
+
 
         if (!await _movementRepository.IsSameBank(accountSourceId, accountDestinationId))
         {

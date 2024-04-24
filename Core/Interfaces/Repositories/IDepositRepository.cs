@@ -7,5 +7,5 @@ public interface IDepositRepository
 {
     Task<List<DepositDTO>> GetAll();
     Task<DepositDTO> Add(CreateDepositModel model);
-    Task<bool> ExceedsOperationalLimitForCurrentAccount(int accountId, decimal amount);
+    Task<bool> ExceedsOperationalLimitForCurrentAccount(int accountId, decimal amount, DateTime transactionDate);
 }

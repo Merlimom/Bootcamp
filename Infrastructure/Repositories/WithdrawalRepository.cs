@@ -1,5 +1,6 @@
 ﻿using Core.Constants;
 using Core.Entities;
+using Core.Exceptions;
 using Core.Interfaces.Repositories;
 using Core.Models;
 using Core.Request;
@@ -40,26 +41,23 @@ public class WithdrawalRepository : IWithdrawalRepository
 
     public async Task UpdateAccountBalanceForWithdrawal(int accountId, decimal amount)
     {
-
         var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Id == accountId);
         if (account != null)
         {
+            if (account.Balance < amount)
+            {
+                // Si el saldo de la cuenta es menor que el monto de la extracción, lanzar una excepción de negocio
+                throw new BusinessLogicException("Insufficient balance in the account to process this withdrawal.");
+            }
+
+            // Actualizar el saldo de la cuenta
             account.Balance -= amount;
+
+            // Guardar los cambios en la base de datos
             await _context.SaveChangesAsync();
         }
     }
-    public async Task<bool> ExceedsOperationalLimitForCurrentAccount(int accountId, decimal amount)
-    {
-        var account = await _context.Accounts
-                    .Include(a => a.CurrentAccount)
-                    .FirstOrDefaultAsync(a => a.Id == accountId);
 
-        if (account.AccountType == EAccountType.Current && account.CurrentAccount != null)
-        {
-            return amount > account.CurrentAccount.OperationalLimit;
-        }
-        return false;
-    }
 
     public async Task<List<WithdrawalDTO>> GetAll()
     {

@@ -2,6 +2,6 @@
 
 public enum EIsDeletedStatus
 {
-    True,
-    False
+    False,
+    True
 }

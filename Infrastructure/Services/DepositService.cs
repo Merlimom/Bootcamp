@@ -1,4 +1,5 @@
-﻿using Core.Interfaces.Repositories;
+﻿using Core.Exceptions;
+using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Core.Models;
 using Core.Request;
@@ -18,12 +19,12 @@ public class DepositService : IDepositService
     public async Task<DepositDTO> Add(CreateDepositModel model)
     {
 
-        bool exceedsLimit = await _depositRepository.ExceedsOperationalLimitForCurrentAccount(model.AccountId, model.Amount);
+        bool exceedsLimit = await _depositRepository.ExceedsOperationalLimitForCurrentAccount(model.AccountId, model.Amount, model.DepositDateTime);
 
         // Si excede el límite operacional, lanzar una excepción
         if (exceedsLimit)
         {
-            throw new ValidationException("Deposit exceeds the operational limit for the destination account.");
+            throw new BusinessLogicException("Deposit exceeds the operational limit for the destination account.");
         }
 
         return await _depositRepository.Add(model);

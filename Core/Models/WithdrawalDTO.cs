@@ -6,7 +6,7 @@ public class WithdrawalDTO
 
     public decimal Amount { get; set; }
 
-    public DateTime DepositDateTime { get; set; }
+    public DateTime WithdrawalDateTime { get; set; }
 
     public AccountDTO Account { get; set; } = null!;
 }
