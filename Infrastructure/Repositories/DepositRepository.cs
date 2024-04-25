@@ -100,6 +100,18 @@ public class DepositRepository : IDepositRepository
             .SumAsync(m => m.Amount);
 
         return totalDepositsAmount + totalMovementsAmount;
-    } 
+    }
+
+    public async Task<bool> DoesAccountExist(int accountId)
+    {
+        var account = await _context.Accounts.FindAsync(accountId);
+        return account != null;
+    }
+
+    public async Task<bool> DoesBankExist(int bankId)
+    {
+        var bank = await _context.Banks.FindAsync(bankId);
+        return bank != null;
+    }
 
 }

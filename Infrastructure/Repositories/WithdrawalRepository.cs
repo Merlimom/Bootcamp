@@ -71,4 +71,17 @@ public class WithdrawalRepository : IWithdrawalRepository
 
         return withdrawalDTO;
     }
+
+    public async Task<bool> DoesAccountExist(int accountId)
+    {
+        var account = await _context.Accounts.FindAsync(accountId);
+        return account != null;
+    }
+
+    public async Task<bool> DoesBankExist(int bankId)
+    {
+        var bank = await _context.Banks.FindAsync(bankId);
+        return bank != null;
+    }
+
 }

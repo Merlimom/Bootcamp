@@ -171,8 +171,6 @@ public class MovementRepository : IMovementRepository
     }
 
 
-
-
     public async Task<bool> IsSameBank(int sourceAccountId, int destinationAccountId)
     {
         var accounts = await _context.Accounts
@@ -206,6 +204,28 @@ public class MovementRepository : IMovementRepository
 
         await _context.SaveChangesAsync();
     }
+
+    public async Task<string?> GetNonExistingAccount(int sourceAccountId, int destinationAccountId)
+    {
+        var sourceAccountExists = await _context.Accounts.AnyAsync(a => a.Id == sourceAccountId);
+        var destinationAccountExists = await _context.Accounts.AnyAsync(a => a.Id == destinationAccountId);
+
+        if (!sourceAccountExists && !destinationAccountExists)
+        {
+            return "Both Accounts";
+        }
+        else if (!sourceAccountExists)
+        {
+            return "Source Account";
+        }
+        else if (!destinationAccountExists)
+        {
+            return " Destination Account";
+        }
+
+        return null; // Ambas cuentas existen
+    }
+
 
 }
 

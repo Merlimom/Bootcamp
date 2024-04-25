@@ -33,8 +33,4 @@ public class UpdateAccountValidation : AbstractValidator<UpdateAccountModel>
             .NotEmpty().WithMessage("Currency Id cannot be empty");
     }
 
-    private bool BeValidAccountStatus(int arg)
-    {
-        return Enum.IsDefined(typeof(EAccountStatus), arg);
-    }
 }

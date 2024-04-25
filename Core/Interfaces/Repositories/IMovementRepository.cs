@@ -16,6 +16,8 @@ public interface IMovementRepository
     Task<(bool, string)> ExceedsOperationalLimit(int sourceAccountId, int destinationAccountId, decimal amount, DateTime TransferredDateTime);
     Task<bool> IsSameBank(int sourceAccountId, int destinationAccountId);
     Task UpdateAccountBalancesAndLimits(int sourceAccountId, int destinationAccountId, decimal amount);
-   
+    Task<string?> GetNonExistingAccount(int sourceAccountId, int destinationAccountId);
+
+
 
 }

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Core.Models;
+﻿using Core.Models;
 using Core.Request;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;

@@ -8,6 +8,8 @@ public class Payment
 
     public string Description { get; set; } = string.Empty;
 
+    public DateTime DepositDateTime { get; set; }
+
     public decimal Amount { get; set; }
 
     public int ServiceId { get; set; }

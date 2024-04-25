@@ -20,27 +20,6 @@ public class PaymentRepository : IPaymentRepository
 
     public async Task<PaymentDTO> Add(CreatePaymentModel model)
     {
-        //var query = _context.Payments
-        //     .Include(a => a.Account)
-        //     .ThenInclude(a => a.Customer)
-        //     .Include(a => a.Account)
-        //     .Include(a => a.Service)
-        //     .AsQueryable();
-
-        //var result = await query.ToListAsync();
-
-        //var paymentToCreate = model.Adapt<Payment>();
-
-        //_context.Payments.Add(paymentToCreate);
-        //await _context.SaveChangesAsync();
-
-        //// Actualizar el saldo de la cuenta
-        //await UpdateAccountBalance(paymentToCreate.AccountId, paymentToCreate.Amount);
-
-        //var paymentDTO = paymentToCreate.Adapt<PaymentDTO>();
-
-        //return paymentDTO;
-
         var paymentToCreate = model.Adapt<Payment>();
 
         await UpdateAccountBalance(model.AccountId, model.Amount);
@@ -102,4 +81,11 @@ public class PaymentRepository : IPaymentRepository
 
         return account!.Balance >= amount;
     }
+
+    public async Task<bool> DoesAccountExist(int accountId)
+    {
+        var account = await _context.Accounts.FindAsync(accountId);
+        return account != null;
+    }
+
 }

@@ -19,6 +19,13 @@ public class TransferValidationService : ITransferValidationService
     public async Task<bool> ValidateTransfer(int accountSourceId, int accountDestinationId, decimal amount,
                                              int? destinationBankId, string? destinationAccountNumber, string? destinationDocumentNumber, int? currencyId, DateTime TransferredDateTime)
     {
+
+        var nonExistingAccount = await _movementRepository.GetNonExistingAccount(accountSourceId, accountDestinationId);
+        if (nonExistingAccount != null)
+        {
+            throw new BusinessLogicException($"{nonExistingAccount} does not exist.");
+        }
+
         if (!await _movementRepository.IsSameAccountType(accountSourceId, accountDestinationId))
         {
             throw new BusinessLogicException("The accounts are not the same type.");

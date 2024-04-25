@@ -9,5 +9,6 @@ public interface IPaymentRepository
     Task<PaymentDTO> Add(CreatePaymentModel model);
     Task<bool> VerifyServiceExists(int productId);
     Task<bool> IsSufficientBalance(int sourceAccountId, decimal amount);
+    Task<bool> DoesAccountExist(int accountId);
 
 }

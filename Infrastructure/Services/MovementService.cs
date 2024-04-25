@@ -29,6 +29,7 @@ public class MovementService : IMovementService
             throw new BusinessLogicException("Movement validation failed.");
         }
 
+
         return await _movementRepository.Add(model);
     }
 

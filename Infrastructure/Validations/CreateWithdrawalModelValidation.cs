@@ -17,6 +17,8 @@ public class CreateWithdrawalModelValidation : AbstractValidator<CreateWithdrawa
 
         RuleFor(x => x.Amount)
          .NotNull().WithMessage("Amount cannot be null")
-         .NotEmpty().WithMessage("Amount cannot be empty");
+         .NotEmpty().WithMessage("Amount cannot be empty")
+         .GreaterThan(0).WithMessage("Credit Limit must be greater than zero.");
+
     }
 }

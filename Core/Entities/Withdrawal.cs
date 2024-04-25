@@ -6,6 +6,8 @@ public class Withdrawal
 
     public decimal Amount { get; set; }
 
+    public string Description { get; set; } = string.Empty;
+
     public DateTime WithdrawalDateTime { get; set; }
 
     public int AccountId { get; set; }
