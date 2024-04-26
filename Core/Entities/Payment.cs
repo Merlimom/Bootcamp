@@ -8,7 +8,7 @@ public class Payment
 
     public string Description { get; set; } = string.Empty;
 
-    public DateTime DepositDateTime { get; set; }
+    public DateTime DepositDateTime { get; set; } //cambiar nombre
 
     public decimal Amount { get; set; }
 

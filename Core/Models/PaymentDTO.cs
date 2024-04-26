@@ -9,6 +9,8 @@ public class PaymentDTO
 
     public string Description { get; set; } = string.Empty;
 
+    public DateTime PaymentDateTime { get; set; }
+
     public decimal Amount { get; set; }
 
     public ServiceDTO Service { get; set; } = null!;
