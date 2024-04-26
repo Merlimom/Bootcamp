@@ -5,15 +5,11 @@ namespace Core.Request;
 
 public class CreateMovementModel
 {
-    //public EMovementType MovementType { get; set; } = EMovementType.Transfer;
-
     public string Description { get; set; } = string.Empty;
 
     public decimal Amount { get; set; }
 
     public DateTime? TransferredDateTime { get; set; }
-
-    //public ETransferStatus TransferStatus { get; set; } = ETransferStatus.Pending;
 
     public int AccountDestinationId { get; set; }
 

@@ -8,12 +8,12 @@ public class CreateDepositModelValidation : AbstractValidator<CreateDepositModel
     public CreateDepositModelValidation()
     {
         RuleFor(x => x.AccountId)
-           .NotNull().WithMessage("Amount cannot be null")
-           .NotEmpty().WithMessage("Amount cannot be empty");
+           .NotNull().WithMessage("AccountId cannot be null")
+           .NotEmpty().WithMessage("AccountId cannot be empty");
 
         RuleFor(x => x.BankId)
-          .NotNull().WithMessage("Amount cannot be null")
-          .NotEmpty().WithMessage("Amount cannot be empty");
+          .NotNull().WithMessage("BankId cannot be null")
+          .NotEmpty().WithMessage("BankId cannot be empty");
 
 
         RuleFor(x => x.Amount)

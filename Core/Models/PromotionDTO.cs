@@ -10,7 +10,5 @@ public class PromotionDTO
     public DateTime End { get; set; }
     public int Discount { get; set; }
 
-    public List<EnterpriseDTO> Enterprises { get; set; } = new List<EnterpriseDTO>();
-    //public List<EnterpriseDTO> RelatedEnterprises { get; set; } = new List<EnterpriseDTO>(); // Lista de empresas relacionadas
-    
+    public List<EnterpriseDTO> Enterprises { get; set; } = new List<EnterpriseDTO>();    
 }

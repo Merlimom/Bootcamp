@@ -74,7 +74,6 @@ public class DepositRepository : IDepositRepository
             return (amount + totalAmount) > account.CurrentAccount.OperationalLimit;
         }
 
-        // Si la cuenta no es de tipo corriente, no se aplica esta validación
         return false;
     }
 
@@ -86,7 +85,6 @@ public class DepositRepository : IDepositRepository
 
         if (account == null || account.AccountType != EAccountType.Current || account.CurrentAccount == null)
         {
-            // Si la cuenta no es de tipo Current o no tiene un CurrentAccount asociado, retornar 0
             return 0;
         }
 

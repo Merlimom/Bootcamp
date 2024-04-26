@@ -1,9 +1,5 @@
-﻿using Core.Constants;
-using Core.Entities;
-using Core.Request;
+﻿using Core.Request;
 using FluentValidation;
-using Infrastructure.Contexts;
-using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Validations;
 
@@ -12,7 +8,9 @@ public class CreateMovementModelValidations : AbstractValidator<CreateMovementMo
     public CreateMovementModelValidations()
     {
         RuleFor(x => x.Amount)
-            .NotNull().WithMessage("Name cannot be null")
-            .NotEmpty().WithMessage("Name cannot be empty");
-    }   
+            .NotNull().WithMessage("Amount cannot be null")
+            .NotEmpty().WithMessage("Amount cannot be empty")
+            .GreaterThan(0).WithMessage("Amount must be greater than zero.");
+
+    }
 }

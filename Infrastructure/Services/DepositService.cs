@@ -36,7 +36,6 @@ public class DepositService : IDepositService
 
         bool exceedsLimit = await _depositRepository.ExceedsOperationalLimitForCurrentAccount(model.AccountId, model.Amount, model.DepositDateTime);
 
-        // Si excede el límite operacional, lanzar una excepción
         if (exceedsLimit)
         {
             throw new BusinessLogicException("Deposit exceeds the operational limit for the destination account.");

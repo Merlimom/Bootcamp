@@ -13,8 +13,7 @@ public class UpdateCostumerModelValidation : AbstractValidator<UpdateCustomerMod
            .NotEmpty().WithMessage("Name cannot be empty");
 
         RuleFor(x => x.BankId)
-            .NotNull().WithMessage("Name cannot be null")
-            .NotEmpty().WithMessage("Name cannot be empty");
+            .NotEmpty().WithMessage("BankId cannot be empty");
 
         RuleFor(x => x.CustomerStatus)
            .Must(x => Enum.IsDefined(typeof(ECustomerStatus), x))

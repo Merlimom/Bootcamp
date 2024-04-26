@@ -26,9 +26,9 @@ public class CreateCreditCardModelValidation : AbstractValidator<CreateCreditCar
             .Must(IsValidCreditCardNumber).WithMessage("Card number must have 16 numeric digits");
 
         RuleFor(x => x.Cvv)
-            .NotNull().WithMessage("Card Number cannot be null")
-            .NotEmpty().WithMessage("Card Number cannot be empty")
-            .Must(IsValidCvvNumber).WithMessage("Card number must have 3 numeric digits");
+            .NotNull().WithMessage("Cvv cannot be null")
+            .NotEmpty().WithMessage("Cvvcannot be empty")
+            .Must(IsValidCvvNumber).WithMessage("Cvv must have 3 numeric digits");
 
         RuleFor(x => x.CreditCardStatus)
             .Must(x => Enum.IsDefined(typeof(ECreditCardStatus), x))
@@ -40,17 +40,12 @@ public class CreateCreditCardModelValidation : AbstractValidator<CreateCreditCar
 
         RuleFor(x => x.AvailableCredit)
             .NotNull().WithMessage("Available Credit cannot be null")
-            .GreaterThan(500000).WithMessage("Interest must be greater than five hundred thousand.");
+            .GreaterThan(500000).WithMessage("Available Credit must be greater than five hundred thousand.");
 
         RuleFor(x => x.InterestRate)
           .NotNull().WithMessage("Interest Rate cannot be null")
           .GreaterThan(0).WithMessage("Interest must be greater than zero.");
          
-    }
-
-    private bool BeValidCreditCardStatus(int arg)
-    {
-        return Enum.IsDefined(typeof(ECreditCardStatus), arg);
     }
 
     private bool IsValidCreditCardNumber(string creditCardNumber)

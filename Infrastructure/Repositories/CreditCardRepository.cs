@@ -67,12 +67,10 @@ public class CreditCardRepository : ICreditCardRepository
 
     public async Task<List<CreditCardDTO>> GetFiltered(FilterCreditCardModel filter)
     {
-        var customers = await _context.Customers.ToListAsync();
-        var banks = await _context.Banks.ToListAsync();
-        var currencies = await _context.Currencies.ToListAsync();
-
         var query = _context.CreditCards
+            .Include(c => c.Currency)
             .Include(c => c.Customer)
+            .ThenInclude(c => c.Bank)
             .AsQueryable();
 
         if (filter.CustomerId is not null)
@@ -91,8 +89,7 @@ public class CreditCardRepository : ICreditCardRepository
         if (filter.Id is not null)
         {
             query = query.Where(x =>
-                 x.Id != null &&
-                (x.Id).Equals(filter.Id));
+                 x.Id.Equals(filter.Id));
         }
 
         var result = await query.ToListAsync();

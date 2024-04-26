@@ -39,21 +39,14 @@ public class UpdateCreditCardValidation : AbstractValidator<UpdateCreditCardMode
 
         RuleFor(x => x.AvailableCredit)
             .NotNull().WithMessage("Available Credit cannot be null")
-            .GreaterThan(500000).WithMessage("Interest must be greater than five hundred thousand.");
+            .GreaterThan(500000).WithMessage("Available Credit must be greater than five hundred thousand.");
 
         RuleFor(x => x.InterestRate)
           .NotNull().WithMessage("Interest Rate cannot be null")
           .GreaterThan(0).WithMessage("Interest must be greater than zero.");
 
         RuleFor(x => x.CustomerId)
-          .NotNull().WithMessage("Customer Id cannot be null")
           .NotEmpty().WithMessage("Customer Id cannot be empty");
-    }
-
-
-    private bool IsValidCreditCardNumber(string creditCardNumber)
-    {
-        return creditCardNumber.Length == 16;
     }
 
     private bool IsValidCvvNumber(int cvvNumber)

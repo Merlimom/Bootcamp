@@ -13,8 +13,8 @@ public class CreateAccountModelValidation : AbstractValidator<CreateAccountModel
              .NotEmpty().WithMessage("Holder cannot be empty");
 
         RuleFor(x => x.Number)
-            .NotNull().WithMessage("Card Number cannot be null")
-            .NotEmpty().WithMessage("Card Number cannot be empty");
+            .NotNull().WithMessage("Account Number cannot be null")
+            .NotEmpty().WithMessage("Account Number cannot be empty");
 
         RuleFor(x => x.AccountType)
             .Must(x => Enum.IsDefined(typeof(EAccountType), x))
@@ -30,21 +30,21 @@ public class CreateAccountModelValidation : AbstractValidator<CreateAccountModel
 
         When(x => x.AccountType == EAccountType.Saving, () =>
         {
-            RuleFor(x => x.CreateSavingAccountModel.SavingType)
+            RuleFor(x => x.CreateSavingAccountModel!.SavingType)
                  .NotNull().WithMessage("SavingType is required for Savings account");
         });
 
         When(x => x.AccountType == EAccountType.Current, () =>
         {
-            RuleFor(x => x.CreateCurrentAccountModel.OperationalLimit)
+            RuleFor(x => x.CreateCurrentAccountModel!.OperationalLimit)
                 .NotEmpty().WithMessage("OperationalLimit is required for Current account")
                 .GreaterThan(0).WithMessage("OperationalLimit must be greater than zero");
 
 
-            RuleFor(x => x.CreateCurrentAccountModel.MonthAverage)
+            RuleFor(x => x.CreateCurrentAccountModel!.MonthAverage)
                 .NotEmpty().WithMessage("MonthAverage is required for Current account");
 
-            RuleFor(x => x.CreateCurrentAccountModel.Interest)
+            RuleFor(x => x.CreateCurrentAccountModel!.Interest)
                 .NotEmpty().WithMessage("Interest is required for Current account");
         });
     }

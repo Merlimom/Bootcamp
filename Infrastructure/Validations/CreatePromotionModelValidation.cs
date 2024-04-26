@@ -20,8 +20,10 @@ namespace Infrastructure.Validations;
 
             RuleFor(x => x.Discount)
                .NotNull().WithMessage("Discount cannot be null")
-               .NotEmpty().WithMessage("Discount cannot be empty");
+               .NotEmpty().WithMessage("Discount cannot be empty")
+               .GreaterThan(0).WithMessage("Discount must be greater than zero.");
+
 
     }
-    }
+}
 

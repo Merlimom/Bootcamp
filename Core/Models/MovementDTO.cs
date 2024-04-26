@@ -7,8 +7,6 @@ public class MovementDTO
 {
     public int Id { get; set; }
 
-    public EMovementType MovementType { get; set; } = EMovementType.Transfer;
-
     public string Description { get; set; } = string.Empty;
 
     public decimal Amount { get; set; }

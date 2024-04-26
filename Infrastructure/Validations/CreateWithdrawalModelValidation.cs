@@ -8,17 +8,15 @@ public class CreateWithdrawalModelValidation : AbstractValidator<CreateWithdrawa
     public CreateWithdrawalModelValidation()
     {
         RuleFor(x => x.AccountId)
-         .NotNull().WithMessage("Amount cannot be null")
-         .NotEmpty().WithMessage("Amount cannot be empty");
+         .NotEmpty().WithMessage("AccountId cannot be empty");
 
         RuleFor(x => x.BankId)
-          .NotNull().WithMessage("Amount cannot be null")
-          .NotEmpty().WithMessage("Amount cannot be empty");
+          .NotEmpty().WithMessage("BankId cannot be empty");
 
         RuleFor(x => x.Amount)
          .NotNull().WithMessage("Amount cannot be null")
          .NotEmpty().WithMessage("Amount cannot be empty")
-         .GreaterThan(0).WithMessage("Credit Limit must be greater than zero.");
+         .GreaterThan(0).WithMessage("Amount must be greater than zero.");
 
     }
 }

@@ -8,12 +8,6 @@ public class PromotionEnterpriseConfiguration : IEntityTypeConfiguration<Promoti
 {
     public void Configure(EntityTypeBuilder<PromotionEnterprise> entity)
     {
-        //entity.HasKey(p => p.Id);
-
-        //entity
-        //    .HasIndex(e => new { e.PromotionId, e.EnterpriseId })
-        //    .IsUnique();
-
         entity.HasKey(e => new { e.PromotionId, e.EnterpriseId });
 
         entity

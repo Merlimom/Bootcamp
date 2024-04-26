@@ -26,9 +26,4 @@ public class CreateCustomerModelValidation : AbstractValidator<CreateCustomerMod
         RuleFor(x => x.DocumentNumber)
             .NotNull().WithMessage("Document Number cannot be null");    
     }
-
-    //private bool BeValidCustomerStatus(int arg)
-    //{
-    //    return Enum.IsDefined(typeof(ECustomerStatus), arg);
-    //}
 }

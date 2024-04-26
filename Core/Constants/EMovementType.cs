@@ -2,7 +2,8 @@
 
 public enum EMovementType
 {
-    Transfer,
+    Movemement,
     Deposit,
-    Withdrawal
+    Withdrawal,
+    Payment
 }

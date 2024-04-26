@@ -1,6 +1,5 @@
 ﻿using Core.Interfaces.Services;
 using Core.Request;
-using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers
@@ -17,8 +16,6 @@ namespace WebApi.Controllers
         [HttpGet("filtered")]
         public async Task <IActionResult> GetFilteredTransactions([FromQuery] FilterTransactionModel filters)
         {
-            Console.WriteLine($"Month: {filters.Month}, Year: {filters.Year}");
-
             var transactions = await _accountTransactionService.GetFilteredAccountTransactions(filters);
             return Ok(transactions);
         }

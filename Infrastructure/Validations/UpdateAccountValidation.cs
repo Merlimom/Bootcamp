@@ -13,8 +13,8 @@ public class UpdateAccountValidation : AbstractValidator<UpdateAccountModel>
             .NotEmpty().WithMessage("Holder cannot be empty");
 
         RuleFor(x => x.Number)
-            .NotNull().WithMessage("Card Number cannot be null")
-            .NotEmpty().WithMessage("Card Number cannot be empty");
+            .NotNull().WithMessage("Account Number cannot be null")
+            .NotEmpty().WithMessage("Account Number cannot be empty");
 
         RuleFor(x => x.Balance)
             .NotNull().WithMessage("Balance cannot be null")
@@ -25,11 +25,9 @@ public class UpdateAccountValidation : AbstractValidator<UpdateAccountModel>
            .WithMessage("Invalid Account Status");
 
         RuleFor(x => x.CustomerId)
-            .NotNull().WithMessage("Customer Id cannot be null")
             .NotEmpty().WithMessage("Customer Id cannot be empty");
 
         RuleFor(x => x.CurrencyId)
-            .NotNull().WithMessage("Currency Id cannot be null")
             .NotEmpty().WithMessage("Currency Id cannot be empty");
     }
 

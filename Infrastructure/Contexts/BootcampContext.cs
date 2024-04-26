@@ -39,11 +39,11 @@ public partial class BootcampContext : DbContext
 
     public virtual DbSet<PromotionEnterprise> PromotionEnterprises { get; set; }
 
-   public virtual DbSet<UserRequest> UserRequests { get; set; }
+    public virtual DbSet<UserRequest> UserRequests { get; set; }
 
-   public virtual DbSet<Product> Products { get; set; }
+    public virtual DbSet<Product> Products { get; set; }
 
-   public virtual DbSet<Service> Services { get; set; }
+    public virtual DbSet<Service> Services { get; set; }
 
     public virtual DbSet<Payment> Payments { get; set; }
 

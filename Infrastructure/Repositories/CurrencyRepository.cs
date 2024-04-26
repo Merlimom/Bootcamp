@@ -5,7 +5,6 @@ using Core.Request;
 using Infrastructure.Contexts;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Infrastructure.Repositories;
 
@@ -20,8 +19,6 @@ public class CurrencyRepository : ICurrencyRepository
 
     public async Task<CurrencyDTO> Add(CreateCurrencyModel model)
     {
-        //var bank = await _context.Banks.FindAsync(model.BankId);
-
         var currencyToCreate = model.Adapt<Currency>();
 
         _context.Add(currencyToCreate);
@@ -47,7 +44,6 @@ public class CurrencyRepository : ICurrencyRepository
 
     public async Task<CurrencyDTO> GetById(int id)
     {
-        //var banks = await _context.Banks.ToListAsync();
 
         var currency = await _context.Currencies.FindAsync(id);
 
@@ -64,7 +60,6 @@ public class CurrencyRepository : ICurrencyRepository
 
         if (filter.Name is not null)
         {
-            //Aplicar el filtro por nombre ignorando mayúsculas y minúsculas
             string normalizedFilterName = filter.Name.ToLower();
             query = query.Where(x =>
                 (x.Name).ToLower().Equals(normalizedFilterName));
@@ -79,8 +74,6 @@ public class CurrencyRepository : ICurrencyRepository
 
     public async Task<CurrencyDTO> Update(UpdateCurrencyModel model)
     {
-        //var bank = await _context.Banks.FindAsync(model.BankId);
-
         var currency = await _context.Currencies.FindAsync(model.Id);
 
         if (currency is null) throw new Exception("Currency was not found");

@@ -16,8 +16,8 @@ public class MovementService : IMovementService
 
     public MovementService(IMovementRepository movementRepository, ITransferValidationService validationService)
     {
-        _movementRepository = movementRepository; // Inyectado
-        _validationService = validationService; // Inyectado
+        _movementRepository = movementRepository;
+        _validationService = validationService; 
     }
     public async Task<MovementDTO> Add(CreateMovementModel model)
     {

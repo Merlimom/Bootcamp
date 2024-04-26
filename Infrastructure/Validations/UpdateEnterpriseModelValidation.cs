@@ -8,9 +8,8 @@ public class UpdateEnterpriseModelValidation : AbstractValidator<UpdateEnterpris
     public UpdateEnterpriseModelValidation()
     {
         RuleFor(x => x.Id)
-            .NotEmpty().WithMessage("Account Id cannot be empty")
-            .Must(x => x > 0).WithMessage("Invalid Account Id");
-
+            .NotEmpty().WithMessage(" Id cannot be empty")
+            .Must(x => x > 0).WithMessage("Invalid Id");
 
         RuleFor(x => x.Name)
             .NotNull().WithMessage("Name cannot be null")

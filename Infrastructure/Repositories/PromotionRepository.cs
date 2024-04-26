@@ -74,8 +74,7 @@ public class PromotionRepository : IPromotionRepository
         if (filter.Id is not null)
         {
             query = query.Where(x =>
-                 x.Id != null &&
-                (x.Id).Equals(filter.Id));
+                 x.Id.Equals(filter.Id));
         }
 
         if (filter.Name is not null)
